@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mental Aptitude Test - LIU</title>
+<style>
+  :root {
+    --primary: #003366;
+    --accent: #c9a44b;
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b7280;
+    --ok: #2e7d32;
+    --warn: #ed6c02;
+    --bad: #c62828;
+    --border: #e3e6ec;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    font-size: 15px; line-height: 1.55; }
+  .topbar { background: var(--primary); color: white; padding: 14px 24px;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  .topbar h1 { margin: 0; font-size: 17px; font-weight: 600; }
+  .topbar .sub { font-size: 12px; opacity: 0.85; }
+  .container { max-width: 880px; margin: 0 auto; padding: 24px; }
+  .card { background: var(--card); border-radius: 8px; padding: 28px;
+    margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border: 1px solid var(--border); }
+  h2 { color: var(--primary); margin-top: 0; font-size: 22px; border-bottom: 2px solid var(--accent); padding-bottom: 8px; }
+  h3 { color: var(--primary); margin-top: 22px; font-size: 17px; }
+  h4 { color: var(--primary); margin: 14px 0 6px; font-size: 15px; }
+  .progress { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin: 10px 0 20px; }
+  .progress-bar { height: 100%; background: var(--accent); transition: width 0.3s; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 14px; }
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 5px;
+    font: inherit; background: white; }
+  .field input:focus, .field select:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .question { margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px dashed var(--border); }
+  .question:last-child { border-bottom: none; }
+  .qtext { font-weight: 500; margin-bottom: 4px; }
+  .qnum { color: var(--accent); font-weight: 600; margin-right: 6px; }
+  /* Arabic interpretation shown alongside the English (for students less proficient in English) */
+  .qtext-ar { direction: rtl; text-align: right; font-weight: 500; color: var(--primary);
+    margin-bottom: 10px; font-size: 15px; line-height: 1.7; }
+  .option-text-ar { display: block; direction: rtl; text-align: right; color: var(--muted);
+    font-size: 14px; line-height: 1.7; margin-top: 2px; }
+  .options { display: flex; flex-direction: column; gap: 6px; }
+  .option { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px;
+    border: 1px solid var(--border); border-radius: 5px; cursor: pointer; transition: all 0.15s; }
+  .option:hover { background: #f0f4f9; border-color: var(--primary); }
+  .option input { margin-top: 3px; }
+  .option.selected { background: #eef4fb; border-color: var(--primary); }
+  .option-text { flex: 1; }
+  .nav { display: flex; justify-content: space-between; margin-top: 24px; gap: 12px; }
+  button { padding: 10px 20px; border: none; border-radius: 5px; font: inherit;
+    font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary { background: #e3e6ec; color: var(--text); }
+  .btn-secondary:hover { background: #d0d5de; }
+  .btn-accent { background: var(--accent); color: white; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 600; }
+  .pill-ok { background: #e8f5e9; color: var(--ok); }
+  .pill-good { background: #fff8e1; color: #b8860b; }
+  .pill-warn { background: #fff3e0; color: var(--warn); }
+  .pill-bad { background: #ffebee; color: var(--bad); }
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th, td { padding: 9px 11px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+  th { background: #f8f9fb; color: var(--primary); font-weight: 600; }
+  .bar { display: inline-block; width: 90px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; vertical-align: middle; margin-right: 6px; }
+  .bar-fill { display: block; height: 100%; background: var(--accent); }
+  .info-bar { background: #eef4fb; padding: 10px 14px; border-radius: 5px; font-size: 13px; margin-bottom: 14px; border-left: 3px solid var(--primary); }
+  .warning-bar { background: #fff3e0; padding: 10px 14px; border-radius: 5px; font-size: 13px; margin-bottom: 14px; border-left: 3px solid var(--warn); }
+  .placeholder { color: var(--muted); font-style: italic; padding: 8px 12px; background: #fafafa; border: 1px dashed var(--border); border-radius: 4px; font-size: 13px; }
+  .hidden { display: none; }
+  .report-section { margin-bottom: 24px; }
+  .report-section ul { padding-left: 20px; }
+  .report-section li { margin-bottom: 5px; }
+  .rec-box { background: #f8f9fb; border-left: 3px solid var(--accent); padding: 12px 16px; margin: 10px 0; border-radius: 0 4px 4px 0; }
+  .footer-note { color: var(--muted); font-size: 12px; text-align: center; margin: 30px 0 10px; }
+  .count-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  details.breakdown { border: 1px solid var(--border); border-radius: 6px; margin: 8px 0; padding: 4px 12px; background: #fff; }
+  details.breakdown > summary { cursor: pointer; padding: 8px 0; font-size: 14px; color: var(--primary); }
+  details.breakdown > summary::marker { color: var(--accent); }
+  details.breakdown table { margin: 4px 0 10px; }
+  details.breakdown td:last-child, details.breakdown th:last-child { text-align: center; width: 64px; color: var(--ok); font-weight: 600; }
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white; }
+    .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+    .topbar { background: white; color: var(--primary); border-bottom: 2px solid var(--accent); }
+    .container { max-width: 100%; padding: 12px; }
+    details.breakdown > table { display: table !important; }   /* expand when printing */
+  }
+  @media (max-width: 600px) {
+    .row { grid-template-columns: 1fr; }
+    .container { padding: 12px; }
+    .card { padding: 18px; }
+  }
+  #gate { position: fixed; inset: 0; z-index: 1000; background: var(--primary);
+    display: flex; align-items: center; justify-content: center; padding: 20px; }
+  #gate .gate-card { background: var(--card); border-radius: 8px; padding: 32px; width: 100%;
+    max-width: 360px; box-shadow: 0 6px 24px rgba(0,0,0,0.25); text-align: center; }
+  #gate h2 { border: none; margin: 0 0 4px; }
+  #gate p { color: var(--muted); font-size: 13px; margin: 0 0 18px; }
+  #gate input { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 5px;
+    font: inherit; margin-bottom: 12px; }
+  #gate input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+  #gate .gate-error { color: var(--bad); font-size: 13px; min-height: 18px; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ===== Access gate (prototype) — password lives in ACCESS_PASSWORD below ===== -->
+<div id="gate" class="no-print">
+  <div class="gate-card">
+    <h2>Mental Aptitude Test</h2>
+    <p>LIU Prototype &middot; enter the access password to continue.</p>
+    <input type="password" id="gateInput" placeholder="Password" autocomplete="off"
+           onkeydown="if(event.key==='Enter') unlockGate()">
+    <button class="btn-primary" style="width:100%;" onclick="unlockGate()">Enter</button>
+    <div class="gate-error" id="gateError"></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div>
+    <h1>Mental Aptitude Test</h1>
+    <div class="sub">LIU Prototype &middot; Version 1 &middot; 2026</div>
+  </div>
+  <div class="sub no-print">Developed by Dr. Hassan Hajj Hussein &middot; Designed by Mrs. Shima Kassem</div>
+</div>
+
+<div class="container">
+  <div class="progress no-print"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+
+  <!-- PAGE: Intro -->
+  <div class="page card" id="page-intro">
+    <h2>How Aptitude Testing Can Help</h2>
+    <p>The more information you have, the better your decision will be. Guidance counselors can help you appraise your interests, academic achievements, and personality characteristics. Your parents can give you the benefit of their experience. But most importantly, knowing yourself &mdash; knowing your own strengths &mdash; is essential.</p>
+    <h3>What Are Aptitudes?</h3>
+    <p>Aptitudes are natural talents &mdash; special abilities for doing, or learning to do, certain kinds of things easily and quickly. They have little to do with knowledge or culture, or education, or even interests. They have to do with who you are and how you were created.</p>
+    <p>You are most likely to enjoy and find satisfying work which uses your aptitudes. This test is a tool for self-discovery. Please answer honestly based on your natural preferences and instincts. There are no time limits.</p>
+    <div class="info-bar">
+      The test has <b>4 parts</b>: personal information; work-style &amp; personality (10 questions); core academic inclinations (10 questions); and interest &amp; scenario-based questions (20 questions). Together these are scored against <b id="majorCount"></b> university majors, each out of <b>50 points</b>. A separate <b>subject placement quiz</b> (Part 4) then measures current knowledge to refine the recommendation.
+      Allow approximately 60&ndash;90 minutes, and complete the test in one sitting &mdash; your answers are <b>not</b> saved if you close or reload this page.
+    </div>
+
+    <!-- ===== Prototype demo loader (remove this block for production) ===== -->
+    <div class="info-bar no-print" style="border-left-color: var(--accent); background:#fff8e1;">
+      <b>Prototype demo &mdash; load a sample student:</b> instantly see a completed test and its generated report. On the report, use the <i>Back</i> buttons to review how each part was answered. (This overwrites any in-progress answers in this browser.)
+      <div id="exampleButtons" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;"></div>
+    </div>
+    <!-- ===== end demo loader ===== -->
+
+    <div class="nav">
+      <span></span>
+      <button class="btn-primary" onclick="goToPage(1)">Begin Test &rarr;</button>
+    </div>
+  </div>
+
+  <!-- PAGE: Personal Info -->
+  <div class="page card hidden" id="page-personal">
+    <h2>Personal Information</h2>
+    <div class="row">
+      <div class="field"><label>First name</label><input type="text" data-key="firstName"></div>
+      <div class="field"><label>Middle name</label><input type="text" data-key="middleName"></div>
+      <div class="field"><label>Last name</label><input type="text" data-key="lastName"></div>
+      <div class="field"><label>Phone #</label><input type="tel" data-key="phone"></div>
+      <div class="field"><label>Email address</label><input type="email" data-key="email"></div>
+      <div class="field"><label>Age</label><input type="number" data-key="age" min="10" max="80"></div>
+      <div class="field"><label>Gender</label>
+        <select data-key="gender">
+          <option value="">Select...</option><option>Male</option><option>Female</option>
+        </select>
+      </div>
+      <div class="field"><label>Residence (e.g., Rayak - Zahle)</label><input type="text" data-key="residence"></div>
+    </div>
+    <h3>Education-related Information</h3>
+    <div class="row">
+      <div class="field"><label>Name of your school</label><input type="text" data-key="school"></div>
+      <div class="field"><label>Type of educational institute</label>
+        <select data-key="instituteType">
+          <option value="">Select...</option><option>High School</option><option>Technical School</option><option>Other</option>
+        </select>
+      </div>
+      <div class="field"><label>Grade level (e.g., grade 12)</label><input type="text" data-key="gradeLevel"></div>
+      <div class="field"><label>Education track (e.g., Life sciences)</label><input type="text" data-key="track"></div>
+    </div>
+    <h3>Three University Majors You Are Considering</h3>
+    <div class="info-bar">Pick the three majors that interest you most, in order of preference, from the programs LIU offers.</div>
+    <div class="row">
+      <div class="field"><label>First choice</label><select data-key="major1" class="major-select"><option value="">Select a major&hellip;</option></select></div>
+      <div class="field"><label>Second choice</label><select data-key="major2" class="major-select"><option value="">Select a major&hellip;</option></select></div>
+    </div>
+    <div class="field"><label>Third choice</label><select data-key="major3" class="major-select"><option value="">Select a major&hellip;</option></select></div>
+
+    <div class="nav">
+      <button class="btn-secondary" onclick="goToPage(0)">&larr; Back</button>
+      <button class="btn-primary" onclick="goToPage(2)">Continue to Part 1 &rarr;</button>
+    </div>
+  </div>
+
+  <!-- PAGE: Part 1 -->
+  <div class="page card hidden" id="page-part1">
+    <h2>Part 1: Work-Style and Personality</h2>
+    <div class="info-bar">This section measures behavioral tendencies, motivations, and preferences. There are no right or wrong answers &mdash; it's about fit. Choose the option that feels most like you.</div>
+    <div id="part1-questions"></div>
+    <div class="nav">
+      <button class="btn-secondary" onclick="goToPage(1)">&larr; Back</button>
+      <button class="btn-primary" onclick="goToPage(3)">Continue to Part 2 &rarr;</button>
+    </div>
+  </div>
+
+  <!-- PAGE: Part 2 -->
+  <div class="page card hidden" id="page-part2">
+    <h2>Part 2: Core Academic Inclinations</h2>
+    <div class="info-bar">These questions explore your intellectual interests, preferred modes of learning, and the subjects you naturally gravitate toward.</div>
+    <div id="part2-questions"></div>
+    <div class="nav">
+      <button class="btn-secondary" onclick="goToPage(2)">&larr; Back</button>
+      <button class="btn-primary" onclick="goToPage(4)">Continue to Part 3 &rarr;</button>
+    </div>
+  </div>
+
+  <!-- PAGE: Part 3 -->
+  <div class="page card hidden" id="page-part3">
+    <h2>Part 3: Interest and Scenario-Based Questions</h2>
+    <div class="info-bar">What would you do in each situation? Pick the option most natural to you.</div>
+    <div id="part3-questions"></div>
+    <div class="nav">
+      <button class="btn-secondary" onclick="goToPage(3)">&larr; Back</button>
+      <button class="btn-primary" onclick="goToPage(5)">Continue to Part 4 &rarr;</button>
+    </div>
+  </div>
+
+  <!-- PAGE: Part 4 -->
+  <div class="page card hidden" id="page-part4">
+    <h2>Part 4: Subject Placement Quiz</h2>
+    <div class="info-bar">This section has graded questions across six subjects. Answer each to the best of your ability &mdash; there is no penalty for guessing. You may skip a subject if you have no background in it, but answering provides a more accurate report. These scores measure current knowledge and are used to refine your major recommendation.</div>
+    <div id="part4-questions"></div>
+    <div class="nav">
+      <button class="btn-secondary" onclick="goToPage(4)">&larr; Back</button>
+      <button class="btn-accent" onclick="submitTest()">Submit Test &amp; Generate Report</button>
+    </div>
+  </div>
+
+  <!-- PAGE: Report -->
+  <div class="page card hidden" id="page-report">
+    <div id="report-content"></div>
+    <div class="nav no-print">
+      <button class="btn-secondary" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn-secondary" onclick="if(confirm('Clear all saved data and start over?')){localStorage.removeItem('aptitudeTest');location.reload();}">Start New Test</button>
+    </div>
+  </div>
+
+  <div class="footer-note no-print">
+    Mental Aptitude Test &middot; Prototype build &middot; Answers are not saved between sessions &mdash; complete the test in one sitting.
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  DATA (generated from Guide-Test.xlsx rubric)
+//  MAJORS            : 39 LIU majors
+//  APT_QUESTIONS     : parts 1-3, each option carries a per-major score array
+//  MAJOR_PLACEMENT   : major index -> relevant Part 4 placement subjects
+//  PLACEMENT         : Part 4 graded quiz bank (subject knowledge)
+// ============================================================
+const MAJORS = ["Bachelor of Communication Arts (Advertising)","Bachelor of Communication Arts (Journalism)","Bachelor of Communication Arts (Public Relations)","Bachelor of Communication Arts (Radio and Television)","Bachelor of Biochemistry","Bachelor of Biology","Bachelor of Biomedical Sciences","Bachelor of Chemistry","Bachelor of Computer Science","Bachelor of Information Technology","Bachelor of Food Technology","Bachelor of Graphic Design","Bachelor of Interior Design","Bachelor of Mathematics","Bachelor of Nutrition and Dietetics","Bachelor of Physics","Bachelor of Business Administration - Accounting Concentration","Bachelor of Business Administration - Economics Concentration","Bachelor of Business Administration - Financial Sciences Concentration","Bachelor of Business Administration - Hotel and Tourism Management Concentration","Bachelor of Business Administration - Business Management Concentration","Bachelor of Business Administration - Management of Information Systems Concentration","Bachelor of Business Administration - Marketing Concentration","Bachelor of Business Administration in  International Business Management","Bachelor in  Basic Education - English","Bachelor in  Basic Education - Mathematics","Bachelor in  Basic Education - Sciences","Bachelor of Teaching English as a Foreign Language","Bachelor of Education in Early Childhood Education","Bachelor of Translation and Interpretation","Bachelor of Science in Biomedical Engineering","Bachelor of Science in Communications Engineering","Bachelor of Science in Computer Engineering","Bachelor of Science in Electrical Engineering","Bachelor of Science in Industrial Engineering","Bachelor of Science in Electronics Engineering","Bachelor of Science in Mechanical Engineering","Bachelor of Science in Surveying Engineering","Bachelor of Pharmacy"];
+
+const APT_QUESTIONS = {"part1":[{"q":"1. When working on a group project, I usually:","qa":"عندما أعمل على مشروع جماعي، فإنني عادةً ما:","opts":[{"l":"a","t":"Naturally take charge and assign tasks.","ta":"أتولى القيادة بشكل طبيعي وأقوم بتوزيع المهام.","s":[0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["E"],"o":"Extraversion (assertiveness facet)","ob":[["E",1]]},{"l":"b","t":"Focus on making sure the ideas are practical and can be built.","ta":"أركز على التأكد من أن الأفكار عملية وقابلة للتنفيذ.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0],"r":["R"],"o":"Conscientiousness (practicality, pragmatism)","ob":[["C",1]]},{"l":"c","t":"Check that all the research and information is correct.","ta":"أتحقق من صحة جميع الأبحاث والمعلومات.","s":[0,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,1,1],"r":["I","C"],"o":"Conscientiousness (diligence, accuracy)","ob":[["C",1]]},{"l":"d","t":"Enjoy designing how the final project will look.","ta":"أستمتع بتصميم الشكل النهائي للمشروع.","s":[1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0],"r":["A"],"o":"Openness (aesthetics, creativity)","ob":[["O",1]]}]},{"q":"2. I am most satisfied when my work is","qa":"أشعر بأكبر قدر من الرضا عندما يكون عملي:","opts":[{"l":"a","t":"Well-structured, organized, and follows clear rules.","ta":"منظمًا بشكل جيد، ومهيكلاً، ويتبع قواعد واضحة.","s":[0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],"r":["C"],"o":"Conscientiousness (order, rule-following)","ob":[["C",1]]},{"l":"b","t":"Creative, expressive, and changes how people see things.","ta":"مبدعًا، ومعبرًا، ويساهم بتغيير نظرة الناس للأمور.","s":[1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["A"],"o":"Openness (creativity, values)","ob":[["O",1]]},{"l":"c","t":"Used to solve a detailed technical problem.","ta":"يُستخدم لحل مشكلة تقنية دقيقة.","s":[0,0,0,0,1,1,1,1,1,0,1,0,0,1,0,1,0,1,1,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0],"r":["R","I"],"o":"Openness (intellectual curiosity) + low Neuroticism (focus under complexity)","ob":[["O",1],["N",-1]]},{"l":"d","t":"Helpful to others and improves their skills or well-being.","ta":"مفيدًا للآخرين ويطور من مهاراتهم أو رفاهيتهم.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1],"r":["S"],"o":"Agreeableness (compassion, altruism)","ob":[["A",1]]}]},{"q":"3. Under pressure, I prefer to rely on","qa":"تحت ضغط العمل، أفضّل الاعتماد على:","opts":[{"l":"a","t":"Data, numbers, and logical analysis.","ta":"البيانات، والأرقام، والتحليل المنطقي.","s":[0,1,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,1,0,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,0,1],"r":["I"],"o":"Low Neuroticism (emotional stability) + Conscientiousness (methodical)","ob":[["N",-1],["C",1]]},{"l":"b","t":"My instincts and ability to connect with people.","ta":"حدسي وقدرتي على التواصل مع الناس.","s":[0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0],"r":["S","E"],"o":"Extraversion (social confidence) + Agreeableness","ob":[["E",1],["A",1]]},{"l":"c","t":"Step-by-step procedures and technical manuals.","ta":"الإجراءات التدريجية (خطوة بخطوة) والأدلة التقنية.","s":[0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0],"r":["C","R"],"o":"Conscientiousness (dutifulness, caution)","ob":[["C",1]]},{"l":"d","t":"My creativity to find a new solution.","ta":"إبداعي لإيجاد حل جديد.","s":[1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["A"],"o":"Openness (flexibility, divergent thinking)","ob":[["O",1]]}]},{"q":"4. My friends would describe me as","qa":"قد يصفني أصدقائي بأنني:","opts":[{"l":"a","t":"Realistic, practical, and good with my hands or systems.","ta":"واقعي، وعملي، وصاحب مهارات يدوية.","s":[0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0],"r":["R"],"o":"Low Openness (practical, not abstract) + Conscientiousness","ob":[["O",-1],["C",1]]},{"l":"b","t":"Curious, investigative, and full of questions.","ta":"فضولي، ومحب للبحث، وكثير الأسئلة.","s":[0,1,0,0,1,1,1,1,1,0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,1,0,0,0],"r":["I"],"o":"Openness (curiosity, idea-seeking)","ob":[["O",1]]},{"l":"c","t":"Persuasive, energetic, and social.","ta":"مقنع، ومفعم بالحيوية، واجتماعي.","s":[1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["E","S"],"o":"Extraversion (energy, assertiveness, positive emotion)","ob":[["E",1]]},{"l":"d","t":"Patient, supportive, and a good listener.","ta":"صبور، وداعم، ومستمع جيد.","s":[0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,1],"r":["S"],"o":"Agreeableness (cooperation, empathy, patience)","ob":[["A",1]]}]},{"q":"5. I prefer work environments that are","qa":"أفضّل بيئة العمل التي تكون:","opts":[{"l":"a","t":"Dynamic, fast-paced, and people-oriented.","ta":"ديناميكية، وسريعة الوتيرة، وتتمحور حول التعامل مع الناس.","s":[0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0],"r":["E","S"],"o":"Extraversion (high activity, sociability)","ob":[["E",1]]},{"l":"b","t":"Quiet, focused, and allow for deep concentration.","ta":"هادئة، وتساعد على التركيز، وتسمح بالاستغراق العميق في العمل.","s":[0,0,0,0,1,1,1,1,1,0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,0,0],"r":["R","I"],"o":"Low Extraversion (introversion) + Conscientiousness","ob":[["E",-1],["C",1]]},{"l":"c","t":"Structured, predictable, and process-driven.","ta":"منظمة، ويمكن التنبؤ بمجرياتها، وموجّهة بترتيب الخطوات والإجراءات.","s":[0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,1,0,0,0,1,1,0,0,1,1,1,0,1,0,0,0,0,0,1,0,0,1,1],"r":["C"],"o":"Conscientiousness (order, need for structure)","ob":[["C",1]]},{"l":"d","t":"Visual, artistic, and open to new ideas.","ta":"بصرية، وفنية، ومنفتحة على الأفكار الجديدة.","s":[1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["A"],"o":"Openness (aesthetic sensitivity, exploration)","ob":[["O",1]]}]},{"q":"6. When faced with a broken system (like a schedule or a website), my first thought is to","qa":"عندما أواجه نظاماً معطلاً أو فيه خلل، فإن أول ما يخطر ببالي هو:","opts":[{"l":"a","t":"Figure out how to improve the process for everyone.","ta":"معرفة كيفية تحسين العملية من أجل الجميع.","s":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0],"r":["E","C"],"o":"Extraversion + Openness (innovative leadership)","ob":[["E",1],["O",1]]},{"l":"b","t":"Understand the exact technical reason it failed.","ta":"فهم السبب التقني الدقيق وراء هذا الفشل.","s":[0,1,0,0,1,1,1,1,1,1,1,0,0,1,0,1,0,1,1,0,0,1,0,0,0,0,1,0,0,0,1,1,1,1,0,1,1,1,0],"r":["R","I"],"o":"Conscientiousness (analysis, fault-finding) + low Neuroticism","ob":[["C",1],["N",-1]]},{"l":"c","t":"Find a temporary creative workaround.","ta":"إيجاد حل بديل ومؤقت ومبدع.","s":[1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["A"],"o":"Openness (improvisation, flexibility)","ob":[["O",1]]},{"l":"d","t":"Help others navigate the problem while it's fixed.","ta":"مساعدة الآخرين على التعامل مع المشكلة لحين إصلاحها.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,1],"r":["S"],"o":"Agreeableness (supportiveness) + Extraversion (social problem-solving)","ob":[["A",1],["E",1]]}]},{"q":"7. I make decisions best by","qa":"أتخذ أفضل القرارات من خلال:","opts":[{"l":"a","t":"Weighing the financial costs and benefits.","ta":"موازنة ما بين التكاليف والمردود المالي.","s":[0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,1,1,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0],"r":["E","C"],"o":"Conscientiousness (rational, pragmatic) + low Agreeableness (if competitive)","ob":[["C",1],["A",-1]]},{"l":"b","t":"Consulting experts and scientific evidence.","ta":"استشارة الخبراء والأدلة العلمية الموثقة.","s":[0,1,0,0,1,1,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,1,1,1,1],"r":["I"],"o":"Openness to ideas + Conscientiousness","ob":[["O",1],["C",1]]},{"l":"c","t":"Considering how it will affect team morale and relationships.","ta":"مراعاة مدى تأثير القرار على معنويات فريق عملي والعلاقات بين أفراد الفريق.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0],"r":["S"],"o":"Agreeableness (harmony, collaboration)","ob":[["A",1]]},{"l":"d","t":"Visualizing the different possible outcomes.","ta":"تخيل وتصور جميع النتائج المختلفة المحتملة.","s":[1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["A","I"],"o":"Openness (imagination, future thinking)","ob":[["O",1]]}]},{"q":"8. In my free time, I'm most likely to","qa":"في وقت فراغي، على الأغلب أقوم بـ:","opts":[{"l":"a","t":"Read news about markets, startups, or politics.","ta":"قراءة الأخبار المتعلقة بالأسواق، أو الشركات الناشئة، أو السياسة.","s":[0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["E"],"o":"Extraversion + Openness (ideas, ambition)","ob":[["E",1],["O",1]]},{"l":"b","t":"Take things apart to see how they work or fix them.","ta":"تفكيك الأشياء لمعرفة كيفية عملها أو لإصلاحها.","s":[0,0,0,0,1,1,1,1,1,1,1,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,1,0],"r":["R","I"],"o":"Low Openness (mechanical focus) + Conscientiousness","ob":[["O",-1],["C",1]]},{"l":"c","t":"Draw, decorate my space, or work on creative projects.","ta":"الرسم، أو تزيين غرفتي أو سيارتي أو منزلي، أو العمل على مشاريع إبداعية.","s":[1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["A"],"o":"Openness (aesthetics, creativity)","ob":[["O",1]]},{"l":"d","t":"Volunteer, tutor friends, or care for someone.","ta":"التطوع، أو تدريس الأصدقاء، أو رعاية شخص محتاج.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,1],"r":["S"],"o":"Agreeableness (altruism, compassion)","ob":[["A",1]]}]},{"q":"9. I value","qa":"أنا أقدّر:","opts":[{"l":"a","t":"Innovation and discovering new things.","ta":"الابتكار واكتشاف أشياء جديدة.","s":[0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,0,1,0,0,0,0],"r":["I","A"],"o":"Openness (curiosity, exploration)","ob":[["O",1]]},{"l":"b","t":"Stability and security.","ta":"الاستقرار والأمان.","s":[0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,1,1,1,0,1,1,0,0,0,1,0,0,0,0,0,0,1,1,0,1,1,1,1],"r":["R","C"],"o":"Conscientiousness (predictability) + low Openness","ob":[["C",1],["O",-1]]},{"l":"c","t":"Harmony and teamwork.","ta":"التناغم والعمل الجماعي.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0],"r":["S"],"o":"Agreeableness (cooperation, conflict avoidance)","ob":[["A",1]]},{"l":"d","t":"Artistic freedom and expression.","ta":"الحرية الفنية والتعبير عن الذات.","s":[1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["A"],"o":"Openness (values, non-conformity)","ob":[["O",1]]}]},{"q":"10. My greatest strength is","qa":"نقطة قوتي الكبرى هي:","opts":[{"l":"a","t":"Attention to detail and accuracy.","ta":"الاهتمام بدقة التفاصيل.","s":[0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,1],"r":["C"],"o":"Conscientiousness (carefulness, precision)","ob":[["C",1]]},{"l":"b","t":"Seeing the \"big picture\" and inspiring others.","ta":"رؤية \"الصورة الكاملة\" وإلهام الآخرين.","s":[1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"r":["E","A"],"o":"Extraversion (leadership) + Openness (vision)","ob":[["E",1],["O",1]]},{"l":"c","t":"Understanding complex systems and logic.","ta":"فهم الأنظمة المعقدة والغرض المقصود منها.","s":[0,0,0,0,1,1,1,1,1,1,0,0,0,1,0,1,0,1,1,0,0,1,0,0,0,0,1,0,0,0,1,1,1,1,1,1,1,0,0],"r":["R","I"],"o":"Openness (intellectual) + low Neuroticism","ob":[["O",1],["N",-1]]},{"l":"d","t":"Empathy and communicating clearly.","ta":"التعاطف والتواصل بوضوح.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0],"r":["S"],"o":"Agreeableness (empathy) + Extraversion (warmth)","ob":[["A",1],["E",1]]}]}],"part2":[{"q":"1. In mathematics, I prefer chapters related to","qa":"في الرياضيات، أفضّل الفصول (الدروس) المتعلقة بـ:","opts":[{"l":"a","t":"Calculus and solving complex equations.","ta":"الكلكيولس وحل المعادلات المعقدة.","s":[0,0,0,0,0,0,0,1,1,0,0,0,0,2,0,2,0,0,1,0,0,0,0,0,0,2,0,0,0,0,2,2,2,2,1,2,2,0,0]},{"l":"b","t":"Statistics, probability, and data analysis.","ta":"الإحصاء، والاحتمالات، وتحليل البيانات.","s":[0,2,0,0,2,2,2,2,2,2,2,0,0,2,2,0,1,2,2,2,2,2,2,1,0,2,2,0,0,0,1,1,1,1,1,1,1,1,2]},{"l":"c","t":"Geometry, shapes, and spatial reasoning.","ta":"الهندسة، والأشكال، والتصور الذهني للأشكال وتوقع كيف ستبدو إذا تم تدويرها، أو طيها، أو إعادة ترتيبها.","s":[0,0,0,0,0,0,0,0,1,0,0,2,2,2,0,1,0,0,0,0,0,0,0,0,0,2,2,0,0,0,1,1,1,1,2,1,2,2,0]},{"l":"d","t":"Financial math (interest, loans, profit).","ta":"الرياضيات المالية (الفوائد، القروض، الأرباح).","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,1,2,2,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"e","t":"I do not like math","ta":"أنا لا أحب الرياضيات.","s":[2,1,2,2,1,1,1,1,0,1,1,1,1,0,1,0,0,0,0,0,0,1,1,1,2,0,0,2,2,2,0,0,0,0,0,0,0,0,1]}]},{"q":"2. My favorite part of science class is","qa":"في العلوم، أفضّل الفصول (الدروس) المتعلقة بـ:","opts":[{"l":"a","t":"Chemistry experiments and molecular structures.","ta":"تجارب الكيمياء والتراكيب الجزيئية.","s":[0,0,0,0,2,1,2,2,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,1,0,0,0,1,0,1,0,2]},{"l":"b","t":"Biology, human anatomy, and living systems.","ta":"علم الأحياء، والتشريح البشري، والأنظمة الحية.","s":[0,0,0,0,2,2,2,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,2]},{"l":"c","t":"Physics laws and how forces interact.","ta":"قوانين الفيزياء وكيفية تفاعل القوى.","s":[0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,2,2,0,0,0,2,2,1,2,1,2,2,1,0]},{"l":"d","t":"The real-world application and technology.","ta":"التطبيقات العملية في العالم الحقيقي والإفتراضي.","s":[2,2,1,2,1,1,1,1,2,2,2,1,1,0,1,0,1,2,2,1,1,2,2,2,0,2,2,0,2,1,2,2,2,2,2,2,2,2,2]},{"l":"e","t":"I do not like science","ta":"أنا لا أحب العلوم.","s":[1,1,2,1,0,0,0,0,0,0,0,2,2,2,0,1,2,1,1,2,2,1,1,1,2,1,0,2,1,2,0,0,0,0,0,0,0,0,0]}]},{"q":"3. In language class, I enjoy","qa":"في حصة اللغات، أستمتع بـ:","opts":[{"l":"a","t":"Debating and persuasive writing.","ta":"المناظرات والكتابة الإقناعية.","s":[2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,2,2,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0]},{"l":"b","t":"Analyzing literature and its deeper meaning.","ta":"تحليل الأدب ومعانيه العميقة.","s":[1,2,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,1,2,0,0,0,0,0,0,0,0,0]},{"l":"c","t":"The precise rules of grammar and structure.","ta":"القواعد الدقيقة للغة وبنيتها.","s":[2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,2,1,2,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"Learning about different cultures through language.","ta":"التعرف على الثقافات المختلفة من خلال اللغة.","s":[2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,2,2,1,0,0,0,1,2,0,0,0,0,0,0,0,0,0]},{"l":"e","t":"I do not like courses that focus on language","ta":"أنا لا أحب الحصص التي تركز على اللغة.","s":[0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,1,2,1,0,0,2,2,0,1,0,2,2,2,2,2,2,2,2,2]}]},{"q":"4. I find computer class most interesting when we","qa":"أجد حصة الكمبيوتر أكثر متعة عندما نقوم بـ:","opts":[{"l":"a","t":"Code and solve logic puzzles.","ta":"البرمجة وحل الألغاز.","s":[0,0,0,0,0,0,0,0,2,0,0,0,0,2,0,2,0,0,0,0,0,2,0,0,0,2,2,0,0,0,2,1,2,1,1,1,2,0,0]},{"l":"b","t":"Design graphics or websites.","ta":"تصميم الجرافيك أو المواقع الإلكترونية.","s":[2,2,2,1,0,0,0,0,1,0,0,2,2,0,0,0,0,0,0,1,1,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"c","t":"Work with databases and organize information.","ta":"التعامل مع قواعد البيانات وتنظيم المعلومات.","s":[1,2,1,1,1,1,1,0,2,2,1,0,0,0,2,0,2,2,2,1,1,2,2,1,0,0,0,0,0,1,2,2,2,2,2,2,2,2,2]},{"l":"d","t":"Use software for presentations or analysis.","ta":"استخدام البرامج لتقديم العروض التوضيحية أو التحليلية.","s":[2,2,2,2,2,2,2,2,1,1,2,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,1,1,2,2,2,2,2,1]},{"l":"e","t":"I do not have any experience with computers.","ta":"ليس لدي أي خبرة في التعامل مع الكمبيوتر.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"5. A project that combines art and technical skills is","qa":"المشروع الذي يجمع بين الفن والمهارات التقنية يعتبر بالنسبة لي:","opts":[{"l":"a","t":"challenging but interesting.","ta":"ممتعاً ولكنه يشكل تحدياً.","s":[2,0,0,0,0,0,0,0,2,0,0,2,2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,1,0,0,0,0,0,2,0,0]},{"l":"b","t":"my ideal type of work.","ta":"نوع العمل المثالي.","s":[2,0,0,0,0,0,0,0,1,0,0,2,2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0,0]},{"l":"c","t":"less relevant to my strengths.","ta":"أقل ارتباطاً بنقاط قوتي.","s":[1,2,2,2,2,2,2,2,1,2,2,0,0,2,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,1,2,2,2,2,2,1,2,2]},{"l":"d","t":"fun, but not for a career.","ta":"مسلياً، لكن ليس كمهنة أعتاش منها.","s":[0,2,2,2,2,2,2,2,0,2,2,0,0,2,2,2,2,2,2,2,2,2,0,2,2,2,2,2,2,2,1,2,2,2,2,2,1,2,2]}]},{"q":"6. I learn best through","qa":"أتعلم بشكل أفضل من خلال:","opts":[{"l":"a","t":"Hands-on experiments and labs.","ta":"التجارب العملية والأنشطة المختبرية.","s":[0,0,0,0,2,2,2,2,2,2,2,0,0,1,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,2,2,2]},{"l":"b","t":"Diagrams, charts, and visual aids.","ta":"المخططات، والرسوم البيانية، والوسائل البصرية المساعدة.","s":[1,2,2,1,2,2,2,2,2,2,2,2,2,1,2,2,1,2,1,1,1,2,1,1,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2]},{"l":"c","t":"Lectures and detailed notes.","ta":"المحاضرات والملاحظات التفصيلية.","s":[0,0,0,0,2,2,2,1,0,0,2,0,0,2,2,1,2,1,2,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,2]},{"l":"d","t":"Group discussions and teaching others.","ta":"النقاشات الجماعية وتعليم الآخرين.","s":[2,2,2,2,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,2,2,1,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1]}]},{"q":"7. I would rather write a paper","qa":"إذا طلب مني كتابة ورقة بحثية أفضّل أن أكتب عن:","opts":[{"l":"a","t":"The efficiency of objects in their design.","ta":"تصاميم الأشياء والكفاءة في تصميمها.","s":[1,1,0,0,0,0,0,0,0,0,0,2,2,2,0,2,0,0,0,1,1,0,0,0,0,2,2,0,0,0,2,2,2,2,2,2,2,0,0]},{"l":"b","t":"The science behind a new medical treatment.","ta":"العلم الكامن وراء علاج طبي جديد.","s":[0,1,1,0,2,2,2,2,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,2]},{"l":"c","t":"A review of a product's marketing campaign.","ta":"مراجعة وتقييم لحملة تسويقية لمنتج ما.","s":[2,2,2,0,0,0,0,0,0,0,0,2,0,0,0,0,1,2,2,2,2,1,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"A analysis of a novel or film.","ta":"تحليل رواية أو فيلم سينمائي.","s":[1,2,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,2,2,0,0,0,0,0,0,0,0,0]},{"l":"e","t":"the impact of AI on humanity","ta":"تأثير الذكاء الاصطناعي على البشرية.","s":[1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,2,2,1,0,1,2,2,2,1,1,2,1,1,1,2,2,2,2,2,2,2,2,0]}]},{"q":"8. I am most curious about","qa":"أنا أكثر فضولاً بشأن:","opts":[{"l":"a","t":"How societies and markets function.","ta":"كيفية عمل المجتمعات والأسواق.","s":[2,2,2,2,0,0,0,0,0,0,0,1,0,0,0,0,2,2,2,2,2,1,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"b","t":"How living organisms function and interact.","ta":"كيفية عمل الكائنات الحية وتفاعلها.","s":[0,0,0,0,2,2,2,2,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,2]},{"l":"c","t":"How to build efficient structures and machines.","ta":"كيفية بناء آلات وهياكل ذات كفاءة عالية.","s":[0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,2,2,2,2,2,0,0]},{"l":"d","t":"How to communicate ideas effectively across cultures.","ta":"كيفية توصيل الأفكار بفعالية لمن هم من ثقافات مختلفة.","s":[2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,2,2,2,1,0,2,2,2,0,0,0,0,0,0,0,0,0]},{"l":"e","t":"How technology and algorithms are reforming  the human world","ta":"كيف تعيد التكنولوجيا والخوارزميات تشكيل العالم البشري.","s":[2,2,2,2,1,1,1,1,2,2,1,2,2,2,1,2,1,2,2,1,2,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,1]}]},{"q":"9. What type of non-fiction book or documentary would you be most likely to choose for personal interest?","qa":"ما هو نوع الكتاب الواقعي (غير الخيالي) أو الفيلم الوثائقي الذي ستختاره على الأرجح لاهتمامك الشخصي؟","opts":[{"l":"a","t":"A biography of a successful tech entrepreneur or a book on stock market trends.","ta":"سيرة ذاتية لرائد أعمال ناجح في مجال التكنولوجيا، أو كتاب عن حركات البورصة وأسواق المال.","s":[0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"An exploration of human modern marvels and mega structures.","ta":"استكشاف العجائب الحديثة والهياكل العملاقة التي صنعها الإنسان.","s":[0,1,0,0,0,0,0,0,0,0,0,0,0,2,0,2,0,1,0,1,0,0,0,2,0,0,0,0,0,0,2,2,2,2,2,2,2,2,0]},{"l":"c","t":"A book on genetics, drugs, and diseases; or the effect of modern food processing on human health","ta":"كتاب عن علم الوراثة، والأدوية، والأمراض؛ أو تأثير تصنيع الأغذية الحديث على صحة الإنسان.","s":[0,0,0,0,2,2,2,2,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,2]},{"l":"d","t":"A study on how learning a new language could reshape cognition or the psychology of motivation.","ta":"دراسة حول كيف يمكن لتعلم لغة جديدة أن يعيد تشكيل الإدراك، أو دراسة عن سيكولوجية التحفيز.","s":[2,2,2,2,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,1,1,1,2,1,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0]},{"l":"e","t":"A study on the psychology of how people interact with objects, shapes, colors, and spaces.","ta":"دراسة في علم النفس عن كيفية تفاعل الناس مع الأشياء، والأشكال، والألوان، والمساحات.","s":[2,1,1,1,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0]}]},{"q":"10. When learning a new subject, I am most engaged by","qa":"عند تعلم مادة جديدة، فإن أكثر ما يشد انتباهي ويجذبني هو:","opts":[{"l":"a","t":"Theories, models, and underlying principles.","ta":"النظريات، والنماذج، والمبادئ الأساسية.","s":[1,0,0,0,2,2,1,1,1,1,1,0,0,2,2,2,0,2,2,1,1,1,2,1,0,0,0,0,0,0,2,2,2,1,1,1,1,0,2]},{"l":"b","t":"How things work and why they break.","ta":"كيفية عمل الأشياء وسبب تعطلها.","s":[0,1,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,1,0,1,2,2,2,2,2,2,2,0,0]},{"l":"c","t":"Formulas, rules, and their direct application.","ta":"الصيغ، والقواعد، وتطبيقاتها المباشرة.","s":[0,0,0,0,1,1,2,2,1,0,1,0,0,2,2,2,2,2,2,0,1,1,0,1,0,0,0,0,0,0,1,1,0,0,1,1,1,2,1]},{"l":"d","t":"Case studies, real-world examples, and human stories.","ta":"دراسات ميدانية، أحداث وقصص حقيقية واقعية، وقصص مشاهير وأشخاص ناجحين.","s":[2,2,2,2,0,0,1,0,0,0,2,0,0,0,0,0,0,2,0,2,2,1,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2]},{"l":"e","t":"The opportunity to create an original product or project with the knowledge.","ta":"الفرصة لابتكار منتج أو مشروع أصلي من خلال استخدام هذه المعرفة.","s":[2,2,2,2,0,0,0,0,1,0,1,2,2,0,0,0,0,0,0,1,1,1,2,1,0,0,0,0,0,0,0,0,2,0,0,1,1,0,0]}]}],"part3":[{"q":"1. You see a local business struggling. Your first idea is to","qa":"تلاحظ أن مشروعاً تجارياً محلياً يعاني ويتعثر. فكرتك الأولى هي:","opts":[{"l":"a","t":"Analyze their finances and costs.","ta":"تحليل وضعهم المالي وتكاليفهم.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"Redesign their logo and store layout.","ta":"إعادة تصميم هويتهم وشعارهم وإعادة ترتيب وتغيير ديكور المحل.","s":[1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"c","t":"Create a social media campaign for them.","ta":"إنشاء حملة لهم على وسائل التواصل الاجتماعي.","s":[1,1,1,1,0,0,0,0,1,1,0,1,0,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0,1,0,1,1,0,0,0,0,0,0]},{"l":"d","t":"Suggest they start selling a new or healthier product.","ta":"اقتراح إدخال منتجات جديدة أو أكثر صحية.","s":[0,0,0,0,1,1,1,1,0,0,1,0,0,0,1,0,0,1,0,0,0,0,0,0,1,0,1,1,1,0,1,0,0,1,0,1,1,1,1]}]},{"q":"2. A new phone app is released.  You are most interested in","qa":"تم إصدار تطبيق هاتف جديد. أكثر ما يثير اهتمامك هو:","opts":[{"l":"a","t":"Its business model and how it will make money.","ta":"ما هي الفكرة التجارية خلفه وكيف سيقوم برد المال على المبرمج/المصنّع.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"The user experience and interface design.","ta":"تجربة الاستخدام والشكل التصميمي للتطبيق.","s":[1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"c","t":"The coding architecture and security features.","ta":"بنية البرمجة (الكود) وميزات الأمان.","s":[0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,0]},{"l":"d","t":"Whether it can be used as an educational tool.","ta":"ما إذا كان يمكن استخدامه كأداة تعليم.","s":[0,1,1,1,1,1,1,1,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1]}]},{"q":"3. Your school is planning an event; you volunteer to","qa":"تخطط مدرستك لتنظيم نشاط (فعالية)؛ تفضل التتطوع لـ:","opts":[{"l":"a","t":"Manage the budget, track expenses, and handle sponsor outreach.","ta":"إدارة الميزانية، وتتبع النفقات، والتواصل مع الرعاة.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"Set up the sound system, test equipment, and troubleshoot technical issues.","ta":"إعداد النظام الصوتي، إختبار الأجهزة المستعملة واستكشاف المشكلات الفنية وإصلاحها.","s":[0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,0]},{"l":"c","t":"Design promotional materials, create social media content, and manage event signage.","ta":"تصميم المواد الترويجية والحملة الإعلامية، وإنشاء محتوى وسائل التواصل الاجتماعي.","s":[1,0,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"Collect feedback from attendees using surveys, analyze participation data, and ensure safety protocols are followed","ta":"جمع الآراء من الحاضرين باستخدام الاستبيانات، وتحليل بيانات المشاركة، وضمان اتباع بروتوكولات السلامة.","s":[0,1,0,0,1,1,1,1,0,1,1,0,0,0,1,0,0,1,1,0,0,0,0,0,1,1,1,1,1,1,0,0,1,0,1,0,0,0,1]}]},{"q":"4. On a visit to a factory, you are fascinated by:","qa":"عند زيارتك لمصنع، ما يثير اهتمامك بشدة:","opts":[{"l":"a","t":"The production line's efficiency and cost management.","ta":"كفاءة خط الإنتاج وإدارة التكاليف والموارد.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"The chemical or biological processes creating the product.","ta":"العمليات الكيميائية أو البيولوجية المستخدمة في تصنيع المنتج.","s":[0,0,0,0,1,1,1,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1]},{"l":"c","t":"The machines, robotics, or automation systems in use.","ta":"الآلات، أو الروبوتات، أو أنظمة التشغيل الآلي المستخدمة.","s":[0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,1,1,0,1,1,1,0]},{"l":"d","t":"The safety protocols, worker training, or visual design of the workspace and signage.","ta":"بروتوكولات السلامة، وتدريب العمال، أو التصميم البصري لمساحة العمل واللافتات.","s":[1,1,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1,1,1,0,0,0,0,1,0,0,0,0]}]},{"q":"5. You have to explain a complex topic to a younger student.","qa":"عليك أن تشرح موضوعاً معقداً لطالب أصغر سناً.","opts":[{"l":"a","t":"Draw pictures and diagrams.","ta":"ترسم صوراً ومخططات توضيحية.","s":[0,0,0,1,1,0,1,1,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,1,1,0,0,1,0,0,0,0,0,0,0,0,1,0]},{"l":"b","t":"Break it down into simple, logical steps.","ta":"تقسم الموضوع إلى خطوات بسيطة ومنطقية.","s":[0,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,1,0,1,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1]},{"l":"c","t":"Relate it to a story or something they like.","ta":"تربط الموضوع بقصة أو بشيء يحبه الطالب.","s":[1,1,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"Patiently answer all their \"why\" questions.","ta":"تجيب بصبر على جميع أسئلة الطالب.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0,1]}]},{"q":"6. You receive a kit to assemble a robot.  You immediately","qa":"تلقيت مجموعة أدوات لتجميع روبوت. تقوم فوراً بـ:","opts":[{"l":"a","t":"Read the manual thoroughly from start to finish.","ta":"قراءة دليل التعليمات بدقة من البداية إلى النهاية.","s":[0,1,0,0,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,1,1,0,1,0,1,0,0,0,0,0,0,0,1,1]},{"l":"b","t":"Start connecting parts to see how they fit.","ta":"البدء في توصيل القطع ببعضها حسب تتطابقها.","s":[0,0,0,0,1,1,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0]},{"l":"c","t":"Think of ways to modify its look or function.","ta":"التفكير في طرق لتعديل شكله أو وظيفته.","s":[0,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0]},{"l":"d","t":"Plan how you will demonstrate it to others.","ta":"التخطيط والتفكير بكيفية استعراضه للآخرين.","s":[1,1,1,1,0,0,0,0,0,0,1,1,0,0,1,0,0,1,1,1,1,0,1,1,1,1,1,0,1,1,0,0,0,0,1,0,0,0,0]}]},{"q":"7. Watching a documentary on climate change, you are most engaged when they discuss","qa":"عند مشاهدة فيلم وثائقي عن تغير المناخ، تكون أكثر تفاعلاً عندما يناقشون:","opts":[{"l":"a","t":"The economic impact and green investments.","ta":"الأثر الاقتصادي والاستثمارات الخضراء الصديقة للبيئة.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"The biological impact on ecosystems.","ta":"الأثر البيولوجي على النظم البيئية.","s":[0,0,0,0,1,1,1,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1]},{"l":"c","t":"New engineering solutions (solar, wind).","ta":"الحلول الهندسية الجديدة (الطاقة الشمسية، طاقة الرياح).","s":[0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0]},{"l":"d","t":"How to educate the public on the issue.","ta":"كيفية تثقيف وتوعية الجمهور بهذه القضية.","s":[1,1,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,1]}]},{"q":"8. If you could start a community project, it would be","qa":"إذا كان بإمكانك بدء مشروع مجتمعي، فخيارك سيكون:","opts":[{"l":"a","t":"A small business incubator for young entrepreneurs.","ta":"حاضنة أعمال وتدريب لرواد الأعمال الشباب.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"A weekly science club for children.","ta":"نادٍ علمي أسبوعي للأطفال.","s":[0,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,1,0,1,1,1,1,0,1,1,1,1]},{"l":"c","t":"A public garden or healthy cooking workshop.","ta":"حديقة عامة أو ورشة عمل للطبخ الصحي.","s":[0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"A program to translate important information for refugees.","ta":"برنامج لترجمة المعلومات والمستندات للاجئين.","s":[1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0]}]},{"q":"9. When playing a strategy game, you win by","qa":"عند لعب لعبة استراتيجية، غالباً ما يأتي فوزك عن طريق:","opts":[{"l":"a","t":"Careful long-term planning and resource management.","ta":"التخطيط الدقيق والطويل المدى وإدارة الموارد المتوفرة.","s":[0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"Quick adaptation and clever tactics.","ta":"التكيف السريع والتكتيكات الذكية.","s":[1,1,0,1,0,0,0,0,0,1,0,1,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]},{"l":"c","t":"Forming strong alliances with other players.","ta":"تكوين تحالفات قوية مع اللاعبين الآخرين.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"Thoroughly understanding the game's rules and patterns.","ta":"الفهم العميق لقواعد اللعبة وأنماطها.","s":[0,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1]}]},{"q":"10. Your ideal university elective course would be","qa":"ما هي أنواع الصفوف الجامعية الاختيارية التي تعتبرها مثالية لك:","opts":[{"l":"a","t":"Consumer Behavior, Investments, or Financial Mathematics.","ta":"سلوك المستهلك، أو الاستثمارات، أو الرياضيات المالية.","s":[1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"Human Physiology, Microbiology, or Biostatistics.","ta":"وظائف الأعضاء البشرية، أو علم الأحياء الدقيقة، أو الإحصاء الحيوي.","s":[0,0,0,0,1,1,1,1,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1]},{"l":"c","t":"Digital Media or Architectural Drawing.","ta":"الإعلام الرقمي أو الرسم المعماري.","s":[1,0,0,1,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,0]},{"l":"d","t":"Child Psychology, Cross-Cultural Communication, or Statistical Analysis of Social Trends.","ta":"علم نفس الطفل، أو التواصل عبر الثقافات، أو التحليل الإحصائي للتوجهات المجتمعية.","s":[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"11. A community park is being renovated.  You'd most want to be involved in","qa":"يتم تجديد حديقة عامة. أكثر ما تود المشاركة فيه هو:","opts":[{"l":"a","t":"Fundraising and allocating the budget for different features.","ta":"جمع التبرعات وتخصيص الميزانية للميزات المختلفة.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"Testing soil samples and selecting native plants for the garden beds.","ta":"اختبار عينات التربة واختيار النباتات المحلية لأحواض الحديقة.","s":[0,0,0,0,1,1,1,1,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1]},{"l":"c","t":"Drafting the layout and 3D models of the new playground equipment.","ta":"صياغة المخطط والنماذج الثلاثية الأبعاد لمعدات الملعب الجديدة.","s":[0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0]},{"l":"d","t":"Surveying local families to find out what amenities they need most.","ta":"إجراء استطلاع لآراء العائلات المحلية لمعرفة المرافق التي يحتاجونها أو يفضلونها.","s":[1,1,1,1,0,0,0,0,0,1,0,0,0,1,0,0,0,1,0,0,0,0,1,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"12. When a team project is disorganized, your natural role is to","qa":"عندما يكون مشروع الفريق الذي تنتمي إليه غير منظم، فإن دورك الطبيعي هو:","opts":[{"l":"a","t":"Create a timeline, assign clear tasks, and track progress.","ta":"إنشاء جدول زمني، وتحديد مهام واضحة، وتتبع التقدم.","s":[0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,1,1,1,1,1,0,0,1,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"Dive into the most complex technical problem to solve it.","ta":"الغوص في المشكلة التقنية الأكثر تعقيداً لحلها.","s":[0,0,0,0,1,1,1,1,1,1,1,0,0,1,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,1,1,1,0,1,1,1,0]},{"l":"c","t":"Re-energize the group with a new creative approach or vision.","ta":"إعادة تنشيط المجموعة بنهج أو رؤية إبداعية جديدة.","s":[1,0,1,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"Talk to each member individually to understand their strengths and concerns.","ta":"التحدث مع كل عضو على حدة لفهم نقاط قوتهم ومخاوفهم.","s":[0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1]}]},{"q":"13. You're tasked with improving your school cafeteria. Your first step is to","qa":"أُسندت إليك مهمة تحسين كافيتيريا المدرسة. خطوتك الأولى هي:","opts":[{"l":"a","t":"Research energy efficiency and propose a cost-effective solutions.","ta":"البحث في كفاءة استهلاك الطاقة واقتراح حلول فعالة من حيث التكلفة.","s":[0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,1,1,0,1,1,0,1,0,0,0,0,0,0,1,1,0,1,1,1,1,0,0]},{"l":"b","t":"Analyze the nutritional value of current meals and suggest balanced alternatives.","ta":"تحليل القيمة الغذائية للوجبات الحالية واقتراح بدائل صحية متوازنة.","s":[0,0,0,0,1,1,1,1,0,0,1,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1]},{"l":"c","t":"Redesign the serving area layout to improve traffic flow and efficiency.","ta":"إعادة تصميم تخطيط منطقة تقديم الطعام لتحسين تدفق الحركة والكفاءة.","s":[0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,1,0]},{"l":"d","t":"Interview students to gather feedback on their preferences and dining experience.","ta":"مقابلة الطلاب لجمع آرائهم ومقترحاتهم.","s":[1,1,1,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,0,0,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"14. You have a free afternoon to explore a topic online","qa":"إذا أردت استكشاف موضوع ما من خلال الإنترنت. خيارك الأمثل:","opts":[{"l":"a","t":"Cryptocurrency trends or how a specific company rose to success.","ta":"اتجاهات العملات المشفرة أو قصة صعود شركة معينة إلى النجاح.","s":[0,0,0,0,0,0,0,0,1,1,0,0,0,1,0,0,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0]},{"l":"b","t":"The deep-sea ecosystem or how CRISPR gene-editing works.","ta":"النظام البيئي لأعماق البحار أو كيف تعمل تقنية تعديل الجينات (CRISPR).","s":[0,0,0,0,1,1,1,1,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1]},{"l":"c","t":"How to create visual effects for short films or the history of industrial design.","ta":"كيفية إنشاء مؤثرات بصرية للأفلام القصيرة أو تاريخ التصميم الصناعي.","s":[1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0]},{"l":"d","t":"The psychology of motivation or documentaries about ancient civilizations.","ta":"سيكولوجية التحفيز أو أفلام وثائقية عن الحضارات القديمة.","s":[1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"15. Your friend is stressed about a big exam.  You are most likely to","qa":"صديقك متوتر بسبب اختبار كبير. على الأرجح ستساعده عبرـ:","opts":[{"l":"a","t":"Make a structured study schedule for them to follow.","ta":"وضع جدول دراسي منظم لكي يتبعه.","s":[0,0,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,1,0,0,1,1]},{"l":"b","t":"Quiz them on facts and explain difficult concepts clearly.","ta":"اختبار معلوماته وشرح المفاهيم الصعبة له بوضوح.","s":[0,1,0,1,1,1,1,1,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0]},{"l":"c","t":"Create colorful mnemonics or mind maps to help them remember.","ta":"ابتكار وسائل مساعدة للحفظ ملونة أو خرائط ذهنية لمساعدته على التذكر.","s":[1,0,0,1,0,1,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,1,0]},{"l":"d","t":"Listen to their worries first, then help them practice in a calm, low-pressure way.","ta":"الاستماع إلى مخاوفه أولاً، ثم مساعدته على التدرب بطريقة هادئة وقليلة الضغط.","s":[0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1]}]},{"q":"16. You're given a dataset about your town.  You're curious to","qa":"أُعطيت مجموعة بيانات عن بلدتك. ما هي النقاط الأكثر إثارة لفضولك:","opts":[{"l":"a","t":"Identify potential gaps in the market for new services.","ta":"تحديد الفجوات المحتملة في السوق لتقديم وإنشاء خدمات جديدة.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"Look for correlations, like between education levels and health outcomes.","ta":"البحث عن الارتباطات، مثل العلاقة بين مستويات التعليم والنتائج الصحية.","s":[0,1,0,0,1,1,1,1,0,0,1,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,1]},{"l":"c","t":"Map the data visually to see geographic patterns clearly.","ta":"رسم البيانات بصرياً لرؤية الأنماط الجغرافية بوضوح.","s":[0,1,0,1,0,0,0,0,1,1,0,1,1,1,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,1,0,1,1,1,0]},{"l":"d","t":"Use it to plan a more inclusive series of town events for all age groups.","ta":"استخدامها للتخطيط لسلسلة من الفعاليات الأكثر شمولاً في المدينة لجميع الفئات العمرية.","s":[1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"17. If you were to start a YouTube channel, it would primarily focus on","qa":"إذا كنت ستبدأ قناة على اليوتيوب، فستركز أساساً على:","opts":[{"l":"a","t":"Reviews of products or explaining business strategies.","ta":"تقييم المنتجات لتوعية المستهلك أو شرح استراتيجيات ناجحة في إدارة الأعمال.","s":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0]},{"l":"b","t":"DIY science experiments or \"how things work\" explanations.","ta":"تجارب علمية تصنعها بنفسك (DIY) أو شروحات حول \"كيف تعمل الأشياء\".","s":[0,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,1,1,1,1,1,1]},{"l":"c","t":"Original short films, animation tutorials, or digital art.","ta":"أفلام قصيرة أصيلة، أو دروس رسوم متحركة (أنيميشن)، أو فن رقمي.","s":[0,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"Discussing social issues or interviewing people from different walks of life.","ta":"مناقشة القضايا الاجتماعية أو مقابلة أشخاص من مختلف مجالات الحياة.","s":[0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"18. In a group debating a new law, you contribute most by","qa":"في مناقشة جماعية حول قانون جديد، تساهم بشكل أكبر من خلال:","opts":[{"l":"a","t":"Citing statistics and data to support your side's economic impact.","ta":"الاستشهاد بالإحصاءات والبيانات لدعم مقترحك.","s":[0,1,0,0,1,1,1,1,0,0,1,0,0,0,1,1,1,1,1,1,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"b","t":"Applying logical principles and pointing out potential unintended consequences.","ta":"تطبيق المبادئ المنطقية والإشارة إلى العواقب الغير مقصودة والمحتملة.","s":[0,1,0,0,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,1,1,1,1,1,1,1]},{"l":"c","t":"Crafting a powerful narrative or slogan that captures your position.","ta":"صياغة سرد أو شعار قوي وجذاب يعبر عن موقف فريقك.","s":[1,1,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"d","t":"Facilitating the discussion so everyone feels heard and finding common ground.","ta":"تسهيل النقاش لضمان أن يشعر الجميع بأنهم مسموعون وإيجاد أرضية مشتركة.","s":[0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"19. When you get a new complex gadget, you learn to use it by","qa":"عندما تحصل على جهاز (أداة ذكية) جديد ومعقد، تتعلم كيفية استخدامه عن طريق:","opts":[{"l":"a","t":"Reading reviews and comparing its features to competitors'.","ta":"قراءة البيانات الخاصة بالجهاز ومقارنة ميزاته بميزات المنافسين.","s":[1,1,0,0,1,1,1,1,0,0,0,0,0,0,0,0,1,1,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1]},{"l":"b","t":"Methodically working through all the settings and functions.","ta":"البحث والعمل عبر جميع الإعدادات والوظائف بشكل منهجي ومنظم.","s":[0,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,0,0,0,0,1,1,0,1,0,1,1,0,0,0,1,1,1,1,0,0,1,1,0]},{"l":"c","t":"Customizing its appearance and shortcuts to fit your style.","ta":"تحديث وتغيير مظهره واختصاراته لتناسب أسلوبك.","s":[1,0,0,1,0,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0]},{"l":"d","t":"Asking a friend who has one to show you the best features in person.","ta":"طلب من صديق يمتلك مثله أن يوضح لك أفضل الميزات.","s":[0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,1,1,0,0,0,0,0,0,0,0,0]}]},{"q":"20. Your ideal part-time job would be","qa":"وظيفتك المثالية كعمل جزئي ستكون:","opts":[{"l":"a","t":"Assisting at a real estate office or bank.","ta":"المساعدة في مكتب عقاري أو بنك.","s":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]},{"l":"b","t":"Working at a research facility, food factory, or vet clinic.","ta":"العمل في منشأة أبحاث، أو مصنع أغذية، أو عيادة بيطرية.","s":[0,0,0,0,1,1,1,1,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,1,1,1,1,0,1]},{"l":"c","t":"Helping at a graphic design studio or wedding venue.","ta":"المساعدة في استوديو تصميم جرافيك أو تنظيم حفلات وأفراح.","s":[1,0,0,1,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0]},{"l":"d","t":"Tutoring younger students or volunteering for a local NGO.","ta":"تدريس الطلاب الأصغر سناً أو التطوع في منظمة غير حكومية (NGO) محلية.","s":[0,1,1,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,1,0]}]}]};
+
+const MAJOR_PLACEMENT = [["english","business"],["english"],["english"],["english"],["chemistry","biology"],["biology"],["biology","chemistry"],["chemistry"],["computer"],["computer"],["chemistry","biology"],[],[],["business"],["biology","chemistry"],["engineering"],["business"],["business"],["business"],["business","english"],["business"],["business","computer"],["business","english"],["business","english"],["english"],["business"],["biology","chemistry"],["english"],["english"],["english"],["engineering","biology"],["engineering"],["engineering","computer"],["engineering"],["engineering","business"],["engineering"],["engineering"],["engineering"],["chemistry","biology"]];
+
+const EXAMPLES = [{"id":"karim","name":"Student 1","tag":"tech / logic","profile":{"firstName":"Student 1","lastName":"","phone":"70 123 456","email":"student1@example.com","age":"17","gender":"Male","residence":"Hamra - Beirut","school":"Qemam High School","instituteType":"High School","gradeLevel":"Grade 12","track":"General Sciences","major1":"Bachelor of Computer Science","major2":"Bachelor of Science in Computer Engineering","major3":"Bachelor of Information Technology"},"apt":{"part1":{"0":"a","1":"c","2":"a","3":"b","4":"a","5":"b","6":"b","7":"b","8":"a","9":"c"},"part2":{"0":"a","1":"d","2":"e","3":"a","4":"b","5":"a","6":"e","7":"e","8":"d","9":"b"},"part3":{"0":"a","1":"c","2":"b","3":"c","4":"a","5":"a","6":"c","7":"b","8":"a","9":"c","10":"c","11":"a","12":"a","13":"a","14":"a","15":"c","16":"a","17":"b","18":"b","19":"d"}},"placement":{"computer":0.9,"business":0.6,"engineering":0.55}},{"id":"sara","name":"Student 2","tag":"science / health","profile":{"firstName":"Student 2","lastName":"","phone":"71 234 567","email":"student2@example.com","age":"18","gender":"Female","residence":"Rayak - Zahle","school":"Qemam High School","instituteType":"High School","gradeLevel":"Grade 12","track":"Life Sciences","major1":"Bachelor of Pharmacy","major2":"Bachelor of Biomedical Sciences","major3":"Bachelor of Biology"},"apt":{"part1":{"0":"a","1":"d","2":"a","3":"d","4":"a","5":"d","6":"b","7":"d","8":"a","9":"a"},"part2":{"0":"e","1":"a","2":"e","3":"c","4":"d","5":"a","6":"b","7":"b","8":"a","9":"a"},"part3":{"0":"a","1":"d","2":"d","3":"b","4":"d","5":"a","6":"b","7":"b","8":"d","9":"b","10":"b","11":"d","12":"a","13":"b","14":"a","15":"b","16":"a","17":"b","18":"a","19":"b"}},"placement":{"biology":0.9,"chemistry":0.85,"business":0.4}},{"id":"lina","name":"Student 3","tag":"creative / visual","profile":{"firstName":"Student 3","lastName":"","phone":"76 345 678","email":"student3@example.com","age":"17","gender":"Female","residence":"Jounieh - Keserwan","school":"Qemam High School","instituteType":"High School","gradeLevel":"Grade 12","track":"Humanities","major1":"Bachelor of Graphic Design","major2":"Bachelor of Interior Design","major3":"Bachelor of Communication Arts (Advertising)"},"apt":{"part1":{"0":"a","1":"b","2":"d","3":"d","4":"a","5":"c","6":"d","7":"c","8":"a","9":"b"},"part2":{"0":"e","1":"e","2":"e","3":"b","4":"b","5":"b","6":"a","7":"e","8":"a","9":"e"},"part3":{"0":"c","1":"b","2":"c","3":"d","4":"c","5":"c","6":"d","7":"c","8":"a","9":"c","10":"c","11":"c","12":"a","13":"c","14":"c","15":"c","16":"a","17":"c","18":"c","19":"c"}},"placement":{"english":0.6,"computer":0.45}},{"id":"omar","name":"Student 4","tag":"business — mismatch demo","profile":{"firstName":"Student 4","lastName":"","phone":"78 456 789","email":"student4@example.com","age":"18","gender":"Male","residence":"Saida - South","school":"Qemam High School","instituteType":"High School","gradeLevel":"Grade 12","track":"Economics & Sociology","major1":"Bachelor of Pharmacy","major2":"Bachelor of Business Administration - Marketing Concentration","major3":"Bachelor of Business Administration - Business Management Concentration"},"apt":{"part1":{"0":"a","1":"b","2":"b","3":"c","4":"a","5":"c","6":"d","7":"c","8":"a","9":"b"},"part2":{"0":"d","1":"d","2":"a","3":"b","4":"b","5":"d","6":"c","7":"a","8":"d","9":"a"},"part3":{"0":"c","1":"a","2":"c","3":"d","4":"a","5":"d","6":"d","7":"a","8":"a","9":"a","10":"d","11":"c","12":"a","13":"d","14":"a","15":"a","16":"b","17":"c","18":"a","19":"a"}},"placement":{"business":0.8,"english":0.72,"biology":0.3,"chemistry":0.25}}];
+
+const PLACEMENT = {
+  business: [
+    {q: "If a product costs $80 to make and is sold for $120, what is the profit percentage?",
+     opts: {a: "25%", b: "33.3%", c: "50%", d: "80%"}, ans: "c"},
+    {q: "If you save $1,000 at a 5% annual interest rate, what is the simple interest after one year?",
+     opts: {a: "$5", b: "$50", c: "$55", d: "$500"}, ans: "b"},
+    {q: "A company offering a \"buy one, get one 50% off\" deal is using which element of the marketing mix?",
+     opts: {a: "Product", b: "Price", c: "Promotion", d: "Place"}, ans: "c"},
+    {q: "What does \"ROI\" in business stand for?",
+     opts: {a: "Return on Investment", b: "Rate of Interest", c: "Risk of Inflation", d: "Revenue on Inventory"}, ans: "a"},
+    {q: "Raw, unorganized facts and figures are known as:",
+     opts: {a: "Information", b: "Knowledge", c: "Data", d: "Wisdom"}, ans: "c"},
+    {q: "The total market value of all final goods and services produced within a country in a given period is its:",
+     opts: {a: "Net National Product", b: "Gross Domestic Product (GDP)", c: "Consumer Price Index", d: "Balance of Trade"}, ans: "b"},
+    {q: "If you buy a new laptop for your small business with cash, what happens in your accounting records?",
+     opts: {a: "You gain an expense and lose cash.", b: "You gain an asset and gain cash.", c: "You gain an asset and lose cash.", d: "Nothing, it's a personal item."}, ans: "c"},
+    {q: "Which of these is an example of a business expense?",
+     opts: {a: "A loan from the bank", b: "Money received from a customer", c: "The monthly rent for the shop", d: "A new printer bought for the office"}, ans: "c"},
+    {q: "What is the main goal of marketing?",
+     opts: {a: "Only to make advertisements", b: "To understand customers' needs and wants and provide for them", c: "To keep the accounting books", d: "To manage the business's employees"}, ans: "b"},
+    {q: "What does \"branding\" mean?",
+     opts: {a: "Just the company's logo", b: "The price of a product", c: "Where the product is made", d: "The total image and personality of a product or company in the customer's mind"}, ans: "d"},
+    {q: "Houssam and Samer share flower pots in the ratio 3:5. If Houssam has 180 flower pots, how many has Samer?",
+     opts: {a: "108", b: "240", c: "300", d: "360"}, ans: "c"},
+    {q: "Tarek, Sami, and Fadi share a sum of money. Tarek gets two-fifths, Sami gets 0.45, and Fadi gets $21.00. How much is the original sum?",
+     opts: {a: "$22", b: "$81", c: "$100", d: "$140"}, ans: "d"},
+    {q: "Between 3 p.m. and 4 p.m. a call center received 40% more calls than between 2 p.m. and 3 p.m. (250). How many calls did it receive between 3 p.m. and 4 p.m.?",
+     opts: {a: "290", b: "300", c: "350", d: "415"}, ans: "c"},
+    {q: "A suit originally $280 was reduced by 15% in week 1, then by a further 10% in week 2. What was the final sale price?",
+     opts: {a: "$255.00", b: "$214.20", c: "$210.00", d: "$200.00"}, ans: "b"},
+    {q: "Of 144 conference guests: a quarter took sugar only, five-eighths took milk and sugar, one in 16 took milk only, the rest took it black. How many took it black?",
+     opts: {a: "9", b: "16", c: "36", d: "90"}, ans: "a"},
+    {q: "Start with a full cup of black coffee. Drink 1/3, top with milk; drink half, top with milk; drink 1/6, top with milk; drink the rest. Have you drunk more milk or more coffee?",
+     opts: {a: "More coffee", b: "More milk", c: "The exact same amount of coffee and milk"}, ans: "c"},
+    {q: "The solutions of x² + 3x - 4 = 0 are:",
+     opts: {a: "x₁ = 1 and x₂ = -4", b: "x₁ = 2 and x₂ = -8", c: "No real solution", d: "None of the above"}, ans: "a"},
+    {q: "For the data 95, 70, 85, 75, 75, 86, 90, 10, the Mean and Mode are respectively:",
+     opts: {a: "73.25 and 75", b: "71.25 and 75", c: "80 and 90", d: "73.25 and 90"}, ans: "a"},
+    {q: "A loan of $7,000 to be paid in twelve equal monthly payments at 24% compounded monthly. The amount of each payment is:",
+     opts: {a: "$661.92", b: "$5,402.77", c: "$690.12", d: "$520.21"}, ans: "a"},
+    {q: "In business, a good payback period on an investment is generally:",
+     opts: {a: "3 to 5 years", b: "5 to 10 years", c: "10 to 15 years", d: "20 to 30 years"}, ans: "a"}
+  ],
+
+  engineering: [
+    {q: "In a basic refrigerator, what is the main role of the compressor?",
+     opts: {a: "To cool the air inside the fridge", b: "To circulate the air with a fan", c: "To pump and pressurize the refrigerant gas", d: "To remove moisture from the air"}, ans: "c"},
+    {q: "In a simple electrical circuit, what does a resistor do?",
+     opts: {a: "Reduces current flow", b: "Increases current flow", c: "Increases voltage", d: "Increases wattage"}, ans: "a"},
+    {q: "If a car travels 60 km in 1.5 hours, what is its average speed?",
+     opts: {a: "30 km/h", b: "40 km/h", c: "50 km/h", d: "75 km/h"}, ans: "b"},
+    {q: "What is the primary function of a foundation in a building?",
+     opts: {a: "To make the building taller.", b: "To make the building prettier.", c: "To increase the value of the building.", d: "To support the load and distribute it to the ground."}, ans: "d"},
+    {q: "What type of energy is stored in a water tank on the roof of a building?",
+     opts: {a: "Kinetic Energy", b: "Dynamic Energy", c: "Potential Energy", d: "Electromagnetic Energy"}, ans: "c"},
+    {q: "What type of energy does a moving car possess?",
+     opts: {a: "Potential energy", b: "Chemical energy", c: "Kinetic energy", d: "Thermal energy"}, ans: "c"},
+    {q: "What is the unit of electrical resistance?",
+     opts: {a: "Volt", b: "Ampere", c: "Ohm", d: "Watt"}, ans: "c"},
+    {q: "A simple gear system has a driving gear with 20 teeth meshed with a driven gear with 40 teeth. If the driving gear rotates at 120 rpm clockwise, what is the speed and direction of the driven gear?",
+     opts: {a: "60 RPM, clockwise", b: "60 RPM, counterclockwise", c: "240 RPM, clockwise", d: "240 RPM, counterclockwise"}, ans: "b"},
+    {q: "According to Newton's Second Law of Motion, which equation is correct?",
+     opts: {a: "Force = Mass × Velocity", b: "Force = Mass × Acceleration", c: "Force = Mass ÷ Acceleration", d: "Force = Acceleration ÷ Mass"}, ans: "b"},
+    {q: "Newton's First Law of Motion is also known as the Law of:",
+     opts: {a: "Acceleration", b: "Inertia", c: "Action-Reaction", d: "Gravity"}, ans: "b"},
+    {q: "Which material is most likely to be used for the core of an electromagnet?",
+     opts: {a: "Rubber", b: "Copper", c: "Soft Iron", d: "Aluminum"}, ans: "c"},
+    {q: "In a seesaw (lever) balanced with two children, a heavier child sits closer to the pivot. This is a direct application of which principle?",
+     opts: {a: "Conservation of Energy", b: "Moment of Force (Torque)", c: "Newton's First Law", d: "Pascal's Principle"}, ans: "b"},
+    {q: "If an object is moving at a constant velocity, what can be said about the forces acting on it?",
+     opts: {a: "There are no forces acting on it.", b: "There is a net force in the direction of motion.", c: "The net force acting on it is zero.", d: "The force of friction must be greater than the applied force."}, ans: "c"},
+    {q: "When a balloon is rubbed on hair, it becomes negatively charged and sticks to a wall. This sticking is primarily due to:",
+     opts: {a: "Magnetic attraction", b: "Induction creating a temporary opposite charge in the wall", c: "The balloon becoming hot", d: "Gravity increasing"}, ans: "b"},
+    {q: "In a basic electrical circuit, what does a fuse or circuit breaker do?",
+     opts: {a: "Increases voltage", b: "Stores electrical charge", c: "Protects the circuit by breaking it during overcurrent", d: "Converts AC to DC"}, ans: "c"},
+    {q: "The process of turning a design into a physical object layer by layer using a computer model is called:",
+     opts: {a: "Injection Molding", b: "CNC Machining", c: "3D Printing", d: "Forging"}, ans: "c"},
+    {q: "A pilot ejects from a fighter jet moving forward. Neglecting air resistance, the pilot's initial horizontal motion after ejection will be:",
+     opts: {a: "Immediately stop", b: "The same forward speed as the jet", c: "Move backwards relative to the jet", d: "Straight down"}, ans: "b"},
+    {q: "Which energy conversion takes place in a hydroelectric dam?",
+     opts: {a: "Chemical → Electrical", b: "Nuclear → Thermal", c: "Gravitational Potential → Kinetic → Electrical", d: "Solar → Direct Current"}, ans: "c"},
+    {q: "In a pulley system with two supporting ropes holding a weight, the mechanical advantage is:",
+     opts: {a: "1", b: "2", c: "3", d: "4"}, ans: "b"},
+    {q: "Which of the following is a renewable energy source?",
+     opts: {a: "Natural Gas", b: "Coal", c: "Geothermal Heat", d: "Uranium"}, ans: "c"},
+    // Visual pattern questions Q21-Q30 - placeholders pending image content
+    {q: "[Visual pattern Q21] According to the pattern, what number should replace the question mark?",
+     opts: {a: "1412", b: "4112", c: "4121", d: "1214"}, ans: null, visual: true},
+    {q: "[Visual pattern Q22] According to the pattern, what numbers should replace the two question marks?",
+     opts: {a: "91 and 55", b: "88 and 49", c: "88 and 55", d: "81 and 51"}, ans: null, visual: true},
+    {q: "[Visual figure Q23] What is the area of the figure?",
+     opts: {a: "5.5", b: "6.75", c: "7.5", d: "8.25"}, ans: null, visual: true},
+    {q: "[Visual pattern Q24] What number should replace the question mark?",
+     opts: {a: "5", b: "6", c: "7", d: "8"}, ans: null, visual: true},
+    {q: "[Visual Q25] (See PDF figure)",
+     opts: {a: "A", b: "B", c: "C", d: "D"}, ans: null, visual: true},
+    {q: "[Visual Q26] When folded to form a cube, which is the only one that can be produced?",
+     opts: {a: "A", b: "B", c: "C", d: "D"}, ans: null, visual: true},
+    {q: "Tarek has one and a half times as many pencils as Najib, and Najib has one and a half times as many as Khalil. Together they have 76. How many pencils does Khalil have?",
+     opts: {a: "10", b: "16", c: "20", d: "36"}, ans: "b"},
+    {q: "If Aline gives Marwa $6.00, the money they each have is in the ratio 2:1; if Marwa gives Aline $1.00 the ratio is 1:3. How much money have Aline and Marwa each before any exchange?",
+     opts: {a: "Aline $58.00; Marwa $20.00", b: "Aline $20.00; Marwa $58.00", c: "Aline $30.00; Marwa $6.00", d: "Aline $20.00; Marwa $1.00"}, ans: "a"},
+    {q: "[Visual Q29] What percentage of the visible figure is shaded?",
+     opts: {a: "12.50%", b: "25.00%", c: "33.33%", d: "50.00%"}, ans: null, visual: true},
+    {q: "A nut is stuck on a screw. Which of the following is most effective in freeing it?",
+     opts: {a: "Cooling it", b: "Submerging it in warm water", c: "Heating it"}, ans: "c"}
+  ],
+
+  biology: [
+    {q: "Which cellular organelle is considered the powerhouse of the cell (generates ATP)?",
+     opts: {a: "Nucleus", b: "Golgi Complex", c: "Rough Endoplasmic Reticulum", d: "Mitochondria"}, ans: "d"},
+    {q: "Which vitamin is produced when skin is exposed to sunlight?",
+     opts: {a: "Vitamin A", b: "Vitamin B", c: "Vitamin C", d: "Vitamin D"}, ans: "d"},
+    {q: "What are proteins made of?",
+     opts: {a: "Amino Acids", b: "Polysaccharides", c: "Triglycerides", d: "Fatty acids"}, ans: "a"},
+    {q: "Where in the digestive system is the bulk of nutrients absorbed?",
+     opts: {a: "Stomach", b: "Small intestine", c: "Large intestine", d: "Colon"}, ans: "b"},
+    {q: "What system in the body is responsible for supplying individual cells with oxygen?",
+     opts: {a: "Circulatory System", b: "Respiratory System", c: "Digestive System", d: "Central Nervous System"}, ans: "a"},
+    {q: "Which of the following is a characteristic of mammals?",
+     opts: {a: "Warm-blooded", b: "Produce milk", c: "Have hair", d: "All options are correct"}, ans: "d"},
+    {q: "Yeast is used in baking and fermentation. It belongs to which of the listed kingdoms?",
+     opts: {a: "Bacteria", b: "Fungi", c: "Plant", d: "Animals"}, ans: "b"},
+    {q: "How is milk fermented into yogurt?",
+     opts: {a: "By adding yeast (e.g., Saccharomyces cerevisiae)", b: "By adding bacteria (e.g., Lactobacillus)", c: "By adding an enzyme (e.g., rennet)", d: "By heating it on the stove."}, ans: "b"},
+    {q: "The genetic material of the cell is composed of:",
+     opts: {a: "Ribonucleic acid", b: "Deoxyribonucleic acid", c: "Amino acid", d: "Fatty acid"}, ans: "b"},
+    {q: "The cell wall of plants is composed of:",
+     opts: {a: "Sucrose", b: "Fructose", c: "Amylose", d: "Cellulose"}, ans: "d"}
+  ],
+
+  chemistry: [
+    {q: "The equilibrium SO₂(g) + Cl₂(g) ⇌ SO₂Cl₂(g) can be shifted forward by:",
+     opts: {a: "Removing SO₂", b: "Removing SO₂ and Cl₂", c: "Removing Cl₂", d: "Adding Cl₂"}, ans: "d"},
+    {q: "Thermal decomposition of 46.0 g of KClO₃ (M = 122.5 g/mol) gives KCl and O₂. The mass of O₂ (M = 32 g/mol) obtained, in grams, is:",
+     opts: {a: "12.0 g", b: "18.0 g", c: "6.0 g", d: "36.0 g"}, ans: "b"},
+    {q: "The concentration of hydrogen ion [H⁺] in a solution having pH = 0 is:",
+     opts: {a: "2 M", b: "1 M", c: "0.5 M", d: "0.1 M"}, ans: "b"},
+    {q: "The pH of a buffer solution containing 0.40 M CH₃COOH (pKa = 4.74) and 0.20 M CH₃COO⁻Na is:",
+     opts: {a: "4.45", b: "2.22", c: "5.55", d: "4.90"}, ans: "a"},
+    {q: "The volume of 1 M H₂SO₄ required to neutralize 10 ml of 1 M NaOH (H₂SO₄ + 2 NaOH → Na₂SO₄ + 2 H₂O) is:",
+     opts: {a: "15 ml", b: "10 ml", c: "5 ml", d: "100 ml"}, ans: "c"},
+    {q: "2.4 g of magnesium are burned in excess oxygen (2 Mg + O₂ → 2 MgO). What is the mass of MgO (M = 40 g/mol) formed?",
+     opts: {a: "1.6 g", b: "14.0 g", c: "4.0 g", d: "4.4 g"}, ans: "c"},
+    {q: "What is the weight % of Calcium in calcium carbonate CaCO₃?",
+     opts: {a: "30.0%", b: "40.0%", c: "50.0%", d: "60.0%"}, ans: "b"},
+    {q: "Calculate the mass of NaOH (M = 40 g/mol) required to prepare 10 mL of a 1.0 M solution.",
+     opts: {a: "0.40 g", b: "4.0 g", c: "8.0 g", d: "40.0 g"}, ans: "a"},
+    {q: "The oxidation number of carbon in CO₂ is:",
+     opts: {a: "-2", b: "+1", c: "+2", d: "+4"}, ans: "d"},
+    {q: "A gas occupying a volume of 720 mL under 0.870 atm expands at constant temperature until its pressure reaches 0.435 atm. What is its final volume?",
+     opts: {a: "380 ml", b: "1330 ml", c: "1440 ml", d: "130 ml"}, ans: "c"}
+  ],
+
+  computer: [
+    {q: "In computer science, what does \"HTML\" stand for?",
+     opts: {a: "Hyper Text Markup Language", b: "High Thermal Melting Load", c: "High Text Moderate Language", d: "Human Training Machine Language"}, ans: "a"},
+    {q: "In programming, what is a \"loop\" used for?",
+     opts: {a: "To repeat a set of instructions", b: "To route electricity between computers", c: "To increase the range of the Wi-Fi signal", d: "To connect multiple screens on the same CPU"}, ans: "a"},
+    {q: "What is the main purpose of an operating system (like Windows)?",
+     opts: {a: "To manage the power source of the processor", b: "To manage hardware and software resources", c: "To manage user information", d: "To manage Microsoft Office"}, ans: "b"},
+    {q: "What does \"CPU\" stand for?",
+     opts: {a: "Central Power Unit", b: "Central Performance Unit", c: "Control Performance Utility", d: "Central Processing Unit"}, ans: "d"},
+    {q: "What is the function of the computer's \"firewall\"?",
+     opts: {a: "It is a physical insulator to protect the CPU from fire.", b: "It is a program that allows the user to play video games.", c: "It is a security system that protects from viruses and hackers.", d: "It is a program used by the trash bin to burn deleted files."}, ans: "c"},
+    {q: "In binary code, what does the digit \"1\" represent?",
+     opts: {a: "Off", b: "On", c: "Maybe", d: "Stop"}, ans: "b"},
+    {q: "What is the correct term for a mistake in a program that causes it to run incorrectly?",
+     opts: {a: "Syntax", b: "Bug", c: "Compiler", d: "Algorithm"}, ans: "b"},
+    {q: "What is the main purpose of the RAM in a computer?",
+     opts: {a: "To permanently store your photos and documents.", b: "To provide temporary, fast storage for programs and data currently in use.", c: "To make the graphics on the screen look better.", d: "To connect the computer to a Wi-Fi network."}, ans: "b"},
+    {q: "Which of these is an example of an INPUT device?",
+     opts: {a: "Monitor", b: "Speaker", c: "Printer", d: "Microphone"}, ans: "d"},
+    {q: "What is the primary function of an Algorithm?",
+     opts: {a: "To make the code compile faster.", b: "To provide a step-by-step procedure to solve a problem.", c: "To manage the computer's memory allocation.", d: "To convert high-level code to machine code."}, ans: "b"}
+  ],
+
+  englishA: [ // Concepts and terms (5)
+    {q: "What is the term for translating a spoken language in real-time?",
+     opts: {a: "Transcription", b: "Interpretation", c: "Proofreading", d: "Translation"}, ans: "b"},
+    {q: "According to educational theory, learning through play is most associated with which developmental stage?",
+     opts: {a: "Adolescence", b: "Adulthood", c: "Early Childhood", d: "Infancy"}, ans: "c"},
+    {q: "A teacher who asks many \"why\" and \"how\" questions is promoting:",
+     opts: {a: "Critical Thinking", b: "Memorization", c: "Discipline", d: "Silence"}, ans: "a"},
+    {q: "What is the study of speech sounds called?",
+     opts: {a: "Syntax", b: "Semantics", c: "Phonetics", d: "Morphology"}, ans: "c"},
+    {q: "A teaching strategy where students work together in small groups to achieve a common goal is called:",
+     opts: {a: "Direct Instruction", b: "Independent Study", c: "Cooperative Learning", d: "Lecture Method"}, ans: "c"}
+  ],
+
+  englishB: [ // Incomplete sentences (10)
+    {q: "Sharp knives are actually safer to use _____.",
+     opts: {a: "as dull ones", b: "as ones that are dull", c: "than dull ones", d: "that are dull ones"}, ans: "c"},
+    {q: "A mastery of calculus depends on _____ of algebra.",
+     opts: {a: "an understanding", b: "is understood", c: "to understand", d: "Understand"}, ans: "a"},
+    {q: "_____ he was not a musician himself, Lawrence Hammond developed an electronic keyboard instrument called the Hammond organ.",
+     opts: {a: "Although", b: "That", c: "Despite", d: "For"}, ans: "a"},
+    {q: "In 1837 the University of Michigan became the first state university _____ by a board of regents elected by the voters of the state.",
+     opts: {a: "under the control", b: "it was controlled", c: "being controlled", d: "to be controlled"}, ans: "d"},
+    {q: "Indoor heating systems have made _____ for people to live and work comfortably in temperate climates.",
+     opts: {a: "it is possible", b: "possible", c: "it possible", d: "Possibly"}, ans: "c"},
+    {q: "Certain fish eggs contain droplets of oil, _____ to float on the surface of the water.",
+     opts: {a: "allowing them", b: "allows them", c: "they are allowed", d: "this allows them"}, ans: "a"},
+    {q: "Ancient civilizations such as those of the Phoenicians and the Mesopotamians _____ goods rather than use money.",
+     opts: {a: "use to trade", b: "is used to trade", c: "used to trade", d: "was used to trade"}, ans: "c"},
+    {q: "For the investor who _____ money, silver or bonds are good options.",
+     opts: {a: "has so little a", b: "has very little", c: "has so few", d: "has very few"}, ans: "b"},
+    {q: "Travelers _____ their reservations well in advance if they want to fly during the Christmas holidays.",
+     opts: {a: "had better to get", b: "had to get better", c: "had better get", d: "had better got"}, ans: "c"},
+    {q: "Daniel Webster, Thadeus Stevens, and many others _____ prominent in public life began their careers by teaching at school.",
+     opts: {a: "they became", b: "once they became", c: "became", d: "who became"}, ans: "d"}
+  ],
+
+  englishC: [ // Error detection (10) - options verbatim from "Aptitutde - English - Part C"
+    {q: "Dreams are commonly (A) made up of (B) either (C) visual and (D) verbal images. Which part is the error?",
+     opts: {a: "(A) commonly", b: "(B) made up of", c: "(C) either", d: "(D) and"}, ans: "d"},
+    {q: "The Yale Daily News is oldest than (A) any other (B) college newspaper still (C) in operation (D) in the United States. Which part is the error?",
+     opts: {a: "(A) oldest than", b: "(B) other", c: "(C) still", d: "(D) in operation"}, ans: "a"},
+    {q: "Mary Rinehart was a pioneer (A) in the field (B) of journalist (C) in the early (D) twentieth century. Which part is the error?",
+     opts: {a: "(A) a pioneer", b: "(B) field", c: "(C) journalist", d: "(D) in the early"}, ans: "c"},
+    {q: "The Dave Brubeck Quartet, one of the most popular (A) jazz bands of the 1950s, had a particularly (B) loyal following (C) on campuses college (D). Which part is the error?",
+     opts: {a: "(A) the most popular", b: "(B) particularly", c: "(C) following", d: "(D) campuses college"}, ans: "d"},
+    {q: "In the (A) architecture, a capital (B) is the top (C) portion of a column (D). Which part is the error?",
+     opts: {a: "(A) In the", b: "(B) capital", c: "(C) the top", d: "(D) column"}, ans: "a"},
+    {q: "Today, successful farmers are experts not only in agriculture (A), but also (B) in market (C), finance, and accounting (D). Which part is the error?",
+     opts: {a: "(A) agriculture", b: "(B) but also", c: "(C) market", d: "(D) accounting"}, ans: "c"},
+    {q: "In the early (A) days of jet development, jet engines used (B) great numbers (C) of fuel (D). Which part is the error?",
+     opts: {a: "(A) early", b: "(B) used", c: "(C) numbers", d: "(D) fuel"}, ans: "c"},
+    {q: "Georgia has too (A) many types of soil (B) that virtually (C) any temperature-zone crop can be grown there (D). Which part is the error?",
+     opts: {a: "(A) too", b: "(B) soil", c: "(C) virtually", d: "(D) there"}, ans: "a"},
+    {q: "The sum of all (A) chemical reactions in an organism's (B) living cells are (C) called its (D) metabolism. Which part is the error?",
+     opts: {a: "(A) all", b: "(B) an organism's", c: "(C) are", d: "(D) its"}, ans: "c"},
+    {q: "River transportation (A) in the United States consists (B) primarily (C) of barges pull (D) by towboats. Which part is the error?",
+     opts: {a: "(A) transportation", b: "(B) consists", c: "(C) primarily", d: "(D) pull"}, ans: "d"}
+  ],
+
+  englishD: [ // Meaning agreement (5)
+    {q: "Tashkent, the capital of Uzbekistan, has been an important market and trading place for hundreds of years.",
+     opts: {a: "Tashkent and Uzbekistan are important places to trade hundreds of things in the market.",
+            b: "Tashkent, which is the capital city of Uzbekistan, has been a major place for shopping and for business for centuries.",
+            c: "For hundreds of years, Tashkent has been the capital of Uzbekistan, and the country depends on marketing and trading to boost its economy.",
+            d: "Uzbekistan is a popular place for markets, and for hundreds of years Tashkent has been trading its capital goods."}, ans: "b"},
+    {q: "If I had known that Lisa came back to Lebanon, I would have invited her to my wedding.",
+     opts: {a: "Lisa was invited to the wedding, but she didn't come because she was out of the country.",
+            b: "Lisa was not invited to the wedding because she was outside Lebanon.",
+            c: "Lisa wanted to attend the wedding but she couldn't because she was outside Lebanon.",
+            d: "Lisa was not invited to the wedding because the bride didn't know that Lisa was in Lebanon."}, ans: "d"},
+    {q: "As you head north, the climate gets colder.",
+     opts: {a: "The north and the south have different weather conditions.",
+            b: "The north is warmer than the south.",
+            c: "The north is colder than the south.",
+            d: "The south is colder than the north."}, ans: "c"},
+    {q: "The plane had left by the time Ryan got to the airport.",
+     opts: {a: "Ryan arrived at the airport after the take-off of his flight.",
+            b: "Ryan arrived at the airport before the take-off of his flight.",
+            c: "Ryan always misses his flights.",
+            d: "Ryan is waiting in the airport, for his flight will take off in a few minutes."}, ans: "a"},
+    {q: "I don't want you to give my number to anyone unless it is an emergency.",
+     opts: {a: "You can share my number with others only when something terrible happens.",
+            b: "You must not share my number with anyone even if there is an urgent need.",
+            c: "I would like to keep my phone number private regardless of why it is requested.",
+            d: "You can share my number with anyone who requests it from you whether there is an emergency or not."}, ans: "a"}
+  ],
+
+  englishE: [ // Sentence completion (5)
+    {q: "We must have an ____ supply of food before we start our journey.",
+     opts: {a: "absolute", b: "abstract", c: "abundant", d: "aboard"}, ans: "c"},
+    {q: "It is a very strange fact that frogs ____ water through their skins.",
+     opts: {a: "accelerate", b: "balance", c: "access", d: "absorb"}, ans: "d"},
+    {q: "One should never ____ the importance of family life in the overall development of a child.",
+     opts: {a: "capture", b: "calculate", c: "gamble", d: "underestimate"}, ans: "d"},
+    {q: "In twenty years' time, the food supplies will be so ____ for some countries that people will start immigrating in huge numbers.",
+     opts: {a: "scale", b: "scarce", c: "scan", d: "scare"}, ans: "b"},
+    {q: "Many people in the world are forced to leave their countries and become ____ because of their religious or political views.",
+     opts: {a: "patriots", b: "peasants", c: "refugees", d: "robbers"}, ans: "c"}
+  ],
+
+  englishF: [ // Passage-related (5) - perfume passage summarized
+    {q: "Which of the following is NOT true about perfume making in Islamic countries?",
+     opts: {a: "They created perfume by soaking flower petals in oil.",
+            b: "They dominated perfume making after the fall of the Roman Empire.",
+            c: "They took raw materials for their perfumes from India.",
+            d: "They created a technique which required fewer plant materials."}, ans: "a"},
+    {q: "Why does the writer include this sentence in paragraph 2? \"During the Black Death, the bubonic plague was thought to have resulted from a bad odor which could be averted by inhaling pleasant fragrances such as cinnamon.\"",
+     opts: {a: "To explain why washing was not popular during the Black Death",
+            b: "To show how improper use of perfume caused widespread disease",
+            c: "To illustrate how perfumes used to be ingested to treat disease",
+            d: "To give an example of how fragrances were used for health purposes"}, ans: "d"},
+    {q: "Why did the perfume industry develop in Paris?",
+     opts: {a: "Because it was an important trade route",
+            b: "Because of the rise in the glove-making industry",
+            c: "Because of the introduction of new trade laws",
+            d: "Because of a new fashion in scented gloves"}, ans: "b"},
+    {q: "London came to lead the perfume industry because:",
+     opts: {a: "the French Revolution meant that there were fewer customers in France.",
+            b: "Napoleon's new laws affected the profitability of perfume-making.",
+            c: "the production of perfume ceased during the Napoleonic wars.",
+            d: "the French were unable to export perfumes for a period of time."}, ans: "d"},
+    {q: "Which of the following is NOT true of Rimmel?",
+     opts: {a: "He was one of the first people to utilize trademarks.",
+            b: "He created attractive packaging for his products.",
+            c: "His products were more expensive than other brands.",
+            d: "He transported his goods to potential customers by train."}, ans: "c"}
+  ]
+};
+
+
+// Max aptitude points: part1 (10x1) + part2 (10x2) + part3 (20x1) = 50
+const APT_MAX = 50;
+
+const PLACEMENT_SECTIONS = [
+  {key: "business",    title: "Business-related questions"},
+  {key: "engineering", title: "Engineering-related questions"},
+  {key: "biology",     title: "Biology-related questions"},
+  {key: "chemistry",   title: "Chemistry-related questions"},
+  {key: "computer",    title: "Computer-related questions"},
+  {key: "englishA",    title: "English &mdash; Concepts and terms"},
+  {key: "englishB",    title: "English &mdash; Incomplete sentences"},
+  {key: "englishC",    title: "English &mdash; Sentence error detection"},
+  {key: "englishD",    title: "English &mdash; Meaning agreement"},
+  {key: "englishE",    title: "English &mdash; Sentence completion"},
+  {key: "englishF",    title: "English &mdash; Passage-related questions"}
+];
+const ENGLISH_KEYS = ["englishA","englishB","englishC","englishD","englishE","englishF"];
+const SUBJECT_LABELS = {business:"Business / Quantitative", engineering:"Engineering & Physics",
+  biology:"Biology", chemistry:"Chemistry", computer:"Computer", english:"English"};
+
+// ============================================================
+//  STATE + STORAGE
+// ============================================================
+const PAGES = ["page-intro","page-personal","page-part1","page-part2","page-part3","page-part4","page-report"];
+let currentPage = 0;
+const STORAGE_KEY = "aptitudeTest";
+
+function getState() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+  catch(e) { return {}; }
+}
+function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+
+function goToPage(n) {
+  if (n < 0 || n >= PAGES.length) return;
+  PAGES.forEach((id, i) => document.getElementById(id).classList.toggle("hidden", i !== n));
+  currentPage = n;
+  document.getElementById("progressBar").style.width = ((n / (PAGES.length - 1)) * 100) + "%";
+  window.scrollTo(0, 0);
+}
+
+function escapeHTML(s) {
+  if (s == null) return "";
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+}
+
+// ============================================================
+//  RENDER QUESTIONS
+// ============================================================
+// Aptitude questions (parts 1-3): opts = [{l,t,s,(r)}]
+function renderAptList(containerId, key, items) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = "";
+  items.forEach((item, idx) => {
+    const div = document.createElement("div");
+    div.className = "question";
+    let html = `<div class="qtext"><span class="qnum">${idx + 1}.</span> ${escapeHTML(stripNum(item.q))}</div>`;
+    if (item.qa) html += `<div class="qtext-ar">${escapeHTML(item.qa)}</div>`;
+    html += `<div class="options">`;
+    item.opts.forEach(o => {
+      html += `
+        <label class="option">
+          <input type="radio" name="${key}-${idx}" value="${o.l}" onchange="onAnswer('${key}', ${idx}, '${o.l}', this)">
+          <span class="option-text"><b>${o.l})</b> ${escapeHTML(o.t)}${o.ta ? `<span class="option-text-ar">${escapeHTML(o.ta)}</span>` : ""}</span>
+        </label>`;
+    });
+    html += `</div>`;
+    div.innerHTML = html;
+    c.appendChild(div);
+  });
+}
+
+// Placement questions (part 4): opts = {a:"text",...}, ans:"x"
+function renderPlacementList(containerId, key, items) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = "";
+  items.forEach((item, idx) => {
+    const div = document.createElement("div");
+    div.className = "question";
+    let html = `<div class="qtext"><span class="qnum">${idx + 1}.</span> ${escapeHTML(item.q)}</div>`;
+    if (item.visual) {
+      html += `<div class="placeholder">Visual figure required &mdash; please refer to the printed PDF for Q${idx + 1}, then select an answer below.</div>`;
+    }
+    html += `<div class="options">`;
+    Object.entries(item.opts).forEach(([letter, text]) => {
+      html += `
+        <label class="option">
+          <input type="radio" name="${key}-${idx}" value="${letter}" onchange="onAnswer('${key}', ${idx}, '${letter}', this)">
+          <span class="option-text"><b>${letter})</b> ${escapeHTML(text)}</span>
+        </label>`;
+    });
+    html += `</div>`;
+    div.innerHTML = html;
+    c.appendChild(div);
+  });
+}
+
+function renderPart4() {
+  const c = document.getElementById("part4-questions");
+  c.innerHTML = "";
+  PLACEMENT_SECTIONS.forEach(s => {
+    const wrap = document.createElement("div");
+    wrap.innerHTML = `<h3>${s.title}</h3><div id="part4-${s.key}"></div>`;
+    c.appendChild(wrap);
+    renderPlacementList(`part4-${s.key}`, s.key, PLACEMENT[s.key]);
+  });
+}
+
+// Strip a leading "12." from the rubric question text (we render our own number)
+function stripNum(q) { return String(q).replace(/^\s*\d+\s*\.\s*/, ""); }
+
+function onAnswer(section, idx, letter, el) {
+  const state = getState();
+  state.answers = state.answers || {};
+  state.answers[section] = state.answers[section] || {};
+  state.answers[section][idx] = letter;
+  saveState(state);
+  el.closest(".options").querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+  el.closest(".option").classList.add("selected");
+}
+
+function restore() {
+  const state = getState();
+  document.querySelectorAll("input[data-key], select[data-key]").forEach(el => {
+    const k = el.getAttribute("data-key");
+    if (state.profile && state.profile[k] != null) el.value = state.profile[k];
+    el.addEventListener("input", () => {
+      const s = getState(); s.profile = s.profile || {}; s.profile[k] = el.value; saveState(s);
+    });
+  });
+  if (state.answers) {
+    Object.entries(state.answers).forEach(([section, qs]) => {
+      Object.entries(qs).forEach(([idx, letter]) => {
+        const radio = document.querySelector(`input[name="${section}-${idx}"][value="${letter}"]`);
+        if (radio) { radio.checked = true; radio.closest(".option").classList.add("selected"); }
+      });
+    });
+  }
+}
+
+// ============================================================
+//  SCORING
+// ============================================================
+// Aptitude: sum each major's points across parts 1-3 (0..50)
+function computeAptitude() {
+  const state = getState();
+  const totals = MAJORS.map(() => 0);
+  ["part1","part2","part3"].forEach(part => {
+    const items = APT_QUESTIONS[part];
+    const ans = (state.answers && state.answers[part]) || {};
+    items.forEach((item, idx) => {
+      const letter = ans[idx];
+      if (!letter) return;
+      const opt = item.opts.find(o => o.l === letter);
+      if (!opt) return;
+      opt.s.forEach((v, i) => totals[i] += v);
+    });
+  });
+  return totals;
+}
+
+function rankAptitude(totals) {
+  return MAJORS.map((name, i) => ({
+    name, i, score: totals[i], pct: Math.round((totals[i] / APT_MAX) * 100)
+  })).sort((a, b) => b.score - a.score);
+}
+
+// How many of parts 1-3 were answered (for confidence note)
+function aptitudeAnswered() {
+  const state = getState();
+  let answered = 0, total = 0;
+  ["part1","part2","part3"].forEach(part => {
+    const ans = (state.answers && state.answers[part]) || {};
+    total += APT_QUESTIONS[part].length;
+    answered += APT_QUESTIONS[part].filter((_, idx) => ans[idx]).length;
+  });
+  return {answered, total};
+}
+
+// Placement (Part 4) subject scoring
+function scoreSection(key) {
+  const state = getState();
+  const items = PLACEMENT[key];
+  const answers = (state.answers && state.answers[key]) || {};
+  let scored = 0, correct = 0;
+  items.forEach((item, idx) => {
+    if (item.ans == null) return;          // visual / unscored
+    scored++;
+    if (answers[idx] === item.ans) correct++;
+  });
+  return {correct, scored, pct: scored > 0 ? Math.round((correct / scored) * 100) : 0};
+}
+
+function computePlacement() {
+  const subj = {};
+  ["business","engineering","biology","chemistry","computer"].forEach(k => subj[k] = scoreSection(k));
+  let ec = 0, es = 0;
+  ENGLISH_KEYS.forEach(k => { const s = scoreSection(k); ec += s.correct; es += s.scored; });
+  subj.english = {correct: ec, scored: es, pct: es ? Math.round((ec / es) * 100) : 0};
+  return subj;
+}
+
+// Average placement readiness for a major (null if no mapped subject, or none answered)
+function placementReadiness(majorIndex, placement) {
+  const subjects = MAJOR_PLACEMENT[majorIndex] || [];
+  const vals = subjects.map(k => placement[k]).filter(s => s && s.scored > 0);
+  if (!vals.length) return null;
+  const pct = Math.round(vals.reduce((a, s) => a + s.pct, 0) / vals.length);
+  return {pct, subjects};
+}
+
+function verdictFor(pct) {
+  if (pct >= 80) return {label: "Excellent",       pill: "pill-ok"};
+  if (pct >= 60) return {label: "Good",            pill: "pill-good"};
+  if (pct >= 25) return {label: "Needs improving", pill: "pill-warn"};
+  return            {label: "A major weakness",    pill: "pill-bad"};
+}
+function aptVerdict(pct) {
+  if (pct >= 70) return {label: "Strong match", pill: "pill-ok"};
+  if (pct >= 50) return {label: "Moderate match", pill: "pill-good"};
+  if (pct >= 30) return {label: "Mild match", pill: "pill-warn"};
+  return            {label: "Weak match", pill: "pill-bad"};
+}
+function pillFor(v) { return `<span class="pill ${v.pill}">${v.label}</span>`; }
+
+// Holland (RIASEC) profile from Part 1 answers
+const RIASEC_LABEL = {R:"Realistic (hands-on, practical)", I:"Investigative (analytical, scientific)",
+  A:"Artistic (creative, expressive)", S:"Social (helping, teaching)",
+  E:"Enterprising (leadership, persuasion)", C:"Conventional (organized, procedural)"};
+function hollandProfile() {
+  const state = getState();
+  const ans = (state.answers && state.answers.part1) || {};
+  const counts = {R:0,I:0,A:0,S:0,E:0,C:0};
+  APT_QUESTIONS.part1.forEach((item, idx) => {
+    const l = ans[idx]; if (!l) return;
+    const opt = item.opts.find(o => o.l === l);
+    if (!opt || !opt.r) return;
+    // Holland's RIASEC model (updated): an answer may signal two
+    // orientations. Primary code scores 1.0, each secondary 0.5.
+    const codes = Array.isArray(opt.r) ? opt.r : [opt.r];
+    codes.forEach((c, ci) => { if (counts[c] != null) counts[c] += ci === 0 ? 1 : 0.5; });
+  });
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]);
+}
+
+// Big Five (OCEAN) profile from Part 1 answers — the second framework the
+// source rubric maps each work-style answer to (alongside Holland's RIASEC).
+const OCEAN_LABEL = {O:"Openness", C:"Conscientiousness", E:"Extraversion",
+  A:"Agreeableness", N:"Neuroticism"};
+// How a high vs. low score on each trait reads to a reader.
+const OCEAN_HIGH = {O:"open, curious, creative", C:"organized, dependable, disciplined",
+  E:"outgoing, assertive, energetic", A:"cooperative, compassionate, supportive",
+  N:"sensitive, reactive"};
+const OCEAN_LOW = {O:"practical, concrete, conventional", C:"flexible, spontaneous",
+  E:"reserved, independent", A:"competitive, analytical",
+  N:"emotionally stable, calm under pressure"};
+function bigFiveProfile() {
+  const state = getState();
+  const ans = (state.answers && state.answers.part1) || {};
+  const net = {O:0, C:0, E:0, A:0, N:0};   // signed: + = high, - = low
+  APT_QUESTIONS.part1.forEach((item, idx) => {
+    const l = ans[idx]; if (!l) return;
+    const opt = item.opts.find(o => o.l === l);
+    if (!opt || !opt.ob) return;
+    // Mirror the Holland weighting: first trait primary (1.0), each extra secondary (0.5);
+    // dir (+1 high / -1 low) is baked into each [trait, dir] pair.
+    opt.ob.forEach(([t, dir], ti) => { if (net[t] != null) net[t] += dir * (ti === 0 ? 1 : 0.5); });
+  });
+  return Object.entries(net)
+    .map(([t, v]) => ({t, v, high: v >= 0, mag: Math.abs(v)}))
+    .filter(e => e.mag > 0)
+    .sort((a, b) => b.mag - a.mag);
+}
+
+// Match a student-typed major ONLY to a major LIU actually offers. Never assume a major.
+// A candidate qualifies only if EVERY meaningful word the student typed appears in that
+// major's name (the typed text must genuinely BE that offered major, not merely resemble
+// one). This means a major LIU does not offer is left unmatched rather than mapped to the
+// "nearest" program: "Forensic Science" / "Marine Biology" / "Political Science" -> no match,
+// while "Computer Science", "Pharmacy", "Graphic Design" -> their real majors.
+// Among qualifying candidates we then rank by distinctiveness (idf) + an intact-phrase bonus
+// and tie-break to the more specific (shorter) name. MATCH_MIN_SCORE rejects a lone generic
+// word (e.g. just "Science" or "Business") that, while technically a substring of a name,
+// does not identify a specific program.
+const MATCH_MIN_SCORE = 2.0;   // > generic-word idf (~1.2-1.6), < any distinctive word (>=3.0)
+function matchMajor(text, ranked) {
+  const t = (text || "").toLowerCase().trim();
+  if (!t) return null;
+  const exact = ranked.find(r => r.name.toLowerCase() === t);   // dropdown -> exact program
+  if (exact) return exact;
+  const words = t.split(/[^a-z]+/).filter(w => w.length >= 4);
+  if (!words.length) return null;
+  const N = ranked.length;
+  // document frequency per typed word = how many majors contain it
+  const idf = {};
+  words.forEach(w => {
+    const df = ranked.filter(r => r.name.toLowerCase().includes(w)).length;
+    idf[w] = df > 0 ? Math.log((N + 1) / df) : 0;   // rarer word -> higher weight
+  });
+  const hasPhrase = words.length >= 2 && t.length >= 4;   // genuine multi-word phrase
+  let best = null, bestScore = 0;
+  ranked.forEach(r => {
+    const name = r.name.toLowerCase();
+    if (!words.every(w => name.includes(w))) return;   // gate: must be the actual major
+    let sc = 0;
+    words.forEach(w => { sc += idf[w]; });
+    if (hasPhrase && name.includes(t)) sc += 5;        // whole phrase present (strong)
+    if (sc > bestScore || (sc === bestScore && best && r.name.length < best.name.length)) {
+      best = r; bestScore = sc;
+    }
+  });
+  return bestScore >= MATCH_MIN_SCORE ? best : null;
+}
+
+// For a given major, list the Part 1-3 answers that earned it points
+const PART_LABEL = {part1: "Part 1", part2: "Part 2", part3: "Part 3"};
+function answerBreakdown(mi) {
+  const state = getState();
+  const rows = [];
+  ["part1","part2","part3"].forEach(part => {
+    const ans = (state.answers && state.answers[part]) || {};
+    APT_QUESTIONS[part].forEach((item, idx) => {
+      const letter = ans[idx];
+      if (!letter) return;
+      const opt = item.opts.find(o => o.l === letter);
+      if (!opt) return;
+      const pts = opt.s[mi] || 0;
+      if (pts <= 0) return;
+      rows.push({part: PART_LABEL[part], num: idx + 1, q: stripNum(item.q), ans: opt.t, pts});
+    });
+  });
+  return rows;
+}
+
+// Collapsible "why" tables for the top majors + the student's chosen majors
+function breakdownSection(ranked, chosenMatches) {
+  const focus = [];
+  const seen = new Set();
+  ranked.slice(0, 3).forEach(r => { if (!seen.has(r.i)) { focus.push(r); seen.add(r.i); } });
+  chosenMatches.forEach(m => {
+    if (m && !seen.has(m.i)) { focus.push(ranked.find(r => r.i === m.i)); seen.add(m.i); }
+  });
+  return `
+  <div class="report-section">
+    <h3>Scoring Transparency &mdash; Which Answers Drove Each Major</h3>
+    <p class="count-note">For each major, these are the Part 1&ndash;3 answers that earned it points (total out of ${APT_MAX}). Answers worth 0 points toward that major are omitted. Click a major to expand.</p>
+    ${focus.map((r, fi) => {
+      const rows = answerBreakdown(r.i);
+      return `<details class="breakdown" ${fi === 0 ? "open" : ""}>
+        <summary><b>${escapeHTML(r.name)}</b> &mdash; ${r.score}/${APT_MAX} (${r.pct}%) from ${rows.length} contributing answer${rows.length !== 1 ? "s" : ""}</summary>
+        ${rows.length ? `<table>
+          <tr><th>Part</th><th>Q</th><th>Question</th><th>Student's answer</th><th>Pts</th></tr>
+          ${rows.map(row => `<tr>
+            <td>${row.part}</td><td>${row.num}</td>
+            <td>${escapeHTML(row.q)}</td>
+            <td>${escapeHTML(row.ans)}</td>
+            <td>+${row.pts}</td>
+          </tr>`).join("")}
+        </table>` : `<p class="placeholder">No answered question gave points toward this major.</p>`}
+      </details>`;
+    }).join("")}
+  </div>`;
+}
+
+// ============================================================
+//  REPORT
+// ============================================================
+function generateReport() {
+  const state = getState();
+  const profile = state.profile || {};
+
+  const totals = computeAptitude();
+  const ranked = rankAptitude(totals);
+  const placement = computePlacement();
+  const {answered, total} = aptitudeAnswered();
+  const holland = hollandProfile();
+
+  const fullName = [profile.firstName, profile.middleName, profile.lastName].filter(Boolean).join(" ") || "(unnamed student)";
+  const chosenMajors = [profile.major1, profile.major2, profile.major3].filter(Boolean);
+  const chosenMatches = chosenMajors.map(cm => matchMajor(cm, ranked));
+
+  // ---- Personal info ----
+  let html = `
+  <h2 style="text-align:center; font-size:26px;">Mental Aptitude Test Results</h2>
+  <h3 style="text-align:center; border:none; font-size:20px; color: var(--accent); margin-top:0;">${escapeHTML(fullName)}</h3>
+
+  <div class="report-section">
+    <h3>Personal Information</h3>
+    <table>
+      <tr><th>Name</th><td>${escapeHTML(fullName)}</td></tr>
+      <tr><th>Phone</th><td>${escapeHTML(profile.phone || "")}</td></tr>
+      <tr><th>Email</th><td>${escapeHTML(profile.email || "")}</td></tr>
+      <tr><th>Age</th><td>${escapeHTML(profile.age || "")}</td></tr>
+      <tr><th>Gender</th><td>${escapeHTML(profile.gender || "")}</td></tr>
+      <tr><th>Residence</th><td>${escapeHTML(profile.residence || "")}</td></tr>
+      <tr><th>School</th><td>${escapeHTML(profile.school || "")} (${escapeHTML(profile.instituteType || "")})</td></tr>
+      <tr><th>Grade / Track</th><td>${escapeHTML(profile.gradeLevel || "")} &middot; ${escapeHTML(profile.track || "")}</td></tr>
+      <tr><th>Desired majors</th><td>${chosenMajors.map(escapeHTML).join(" &middot; ") || "(not specified)"}</td></tr>
+    </table>
+  </div>`;
+
+  if (answered < total) {
+    html += `<div class="warning-bar">Note: ${answered} of ${total} aptitude questions (Parts 1&ndash;3) were answered. Unanswered questions contribute 0 points, which lowers every major's score &mdash; complete all questions for the most accurate ranking.</div>`;
+  }
+
+  // ---- Aptitude ranking ----
+  html += `
+  <div class="report-section">
+    <h3>Aptitude Match Ranking</h3>
+    <p class="count-note">Each major is scored out of <b>${APT_MAX}</b> points from your answers in Parts 1&ndash;3 (work-style 10 + academic 20 + interest 20). Top 12 of ${MAJORS.length} majors shown.</p>
+    <table>
+      <tr><th>Rank</th><th>Major</th><th>Score</th><th>Match</th></tr>
+      ${ranked.slice(0, 12).map((r, idx) => `
+        <tr>
+          <td>${idx + 1}</td>
+          <td>${escapeHTML(r.name)}</td>
+          <td><span class="bar"><span class="bar-fill" style="width:${r.pct}%"></span></span> ${r.score}/${APT_MAX} (${r.pct}%)</td>
+          <td>${pillFor(aptVerdict(r.pct))}</td>
+        </tr>`).join("")}
+    </table>
+  </div>`;
+
+  // ---- Personality / interest profile ----
+  const top3 = holland.slice(0, 3);
+  const bigfive = bigFiveProfile();
+  const bf3 = bigfive.slice(0, 3);
+  html += `
+  <div class="report-section">
+    <h3>Personality &amp; Interest Profile</h3>
+    <h4>Interest orientation &mdash; Holland's RIASEC model</h4>
+    <p>Based on your work-style answers (Part 1), your dominant interest orientation is
+      <b>${top3.map(([l]) => l).join("")}</b>:</p>
+    <ul>${top3.map(([l, n]) => `<li><b>${RIASEC_LABEL[l]}</b>${n ? ` &mdash; ${Math.round(n * 10) / 10} pt${n === 1 ? "" : "s"}` : ""}</li>`).join("")}</ul>
+    <h4>Personality traits &mdash; Big Five (OCEAN) model</h4>
+    ${bf3.length ? `<p>The same answers, read through the Big Five model, point to:</p>
+    <ul>${bf3.map(e => `<li><b>${e.high ? "" : "Low "}${OCEAN_LABEL[e.t]}</b> &mdash; ${e.high ? OCEAN_HIGH[e.t] : OCEAN_LOW[e.t]} <span class="count-note">(${Math.round(e.mag * 10) / 10} pt${e.mag === 1 ? "" : "s"})</span></li>`).join("")}</ul>`
+      : `<p class="count-note">Answer the Part 1 questions to see your Big Five profile.</p>`}
+  </div>`;
+
+  // ---- Placement (subject knowledge) ----
+  html += `
+  <div class="report-section">
+    <h3>Subject Placement Quiz (Current Knowledge)</h3>
+    <p class="count-note">These graded scores measure what you currently know and are used to check readiness for the recommended majors.</p>
+    <table>
+      <tr><th>Subject</th><th>Score</th><th>%</th><th>Verdict</th></tr>
+      ${["business","engineering","biology","chemistry","computer","english"].map(k => {
+        const s = placement[k]; const v = verdictFor(s.pct);
+        return `<tr>
+          <td>${SUBJECT_LABELS[k]}</td>
+          <td>${s.correct} / ${s.scored}</td>
+          <td>${s.scored ? s.pct + "%" : "&mdash;"}</td>
+          <td>${s.scored ? pillFor(v) : '<span class="pill pill-warn">Not attempted</span>'}</td>
+        </tr>`;
+      }).join("")}
+    </table>
+    ${PLACEMENT.engineering.some(q => q.visual)
+      ? `<div class="warning-bar">Engineering items Q21&ndash;Q26 and Q29 are visual pattern/figure questions, currently unscored in this prototype because the figures live in the PDF only.</div>`
+      : ""}
+  </div>`;
+
+  // ---- Final recommendation (aptitude + placement) ----
+  const primary = ranked[0], secondary = ranked[1];
+  const recLine = (r) => {
+    const pr = placementReadiness(r.i, placement);
+    let note;
+    if (!pr) note = `placement readiness is aptitude-based only (no direct subject quiz for this major).`;
+    else if (pr.pct >= 60) note = `supported by a placement score of <b>${pr.pct}%</b> in ${pr.subjects.map(s => SUBJECT_LABELS[s]).join(" & ")}.`;
+    else note = `<b>but</b> the related placement score is only <b>${pr.pct}%</b> in ${pr.subjects.map(s => SUBJECT_LABELS[s]).join(" & ")} &mdash; a readiness gap to close before committing.`;
+    return `<b>${escapeHTML(r.name)}</b> (aptitude ${r.score}/${APT_MAX}, ${r.pct}%) &mdash; ${note}`;
+  };
+  html += `
+  <div class="report-section">
+    <h3>Final Recommendation</h3>
+    <div class="rec-box">
+      <p>Combining your <b>aptitude match</b> (Parts 1&ndash;3) with your <b>subject placement</b> (Part 4):</p>
+      <p style="margin:8px 0;">&#9733; Primary path: ${recLine(primary)}</p>
+      <p style="margin:8px 0;">&#9734; Strong alternative: ${recLine(secondary)}</p>
+      <p style="color:var(--muted); font-size:13px; margin-top:10px;">Aptitude shows where your natural strengths and interests fit; the placement score shows how ready your current knowledge is. A high aptitude with a low placement score means the major fits you but you should strengthen that subject first. Final choice should also weigh passion, career goals, and guidance-counselor advice.</p>
+    </div>
+  </div>`;
+
+  // ---- Evaluation of chosen majors ----
+  html += `
+  <div class="report-section">
+    <h3>Evaluation of Your Chosen Majors</h3>
+    ${chosenMajors.length === 0
+      ? `<p class="placeholder">No majors specified by the student.</p>`
+      : chosenMajors.map((cm, ci) => {
+          const m = chosenMatches[ci];
+          if (!m) {
+            return `<div class="rec-box"><b>${escapeHTML(cm)}</b> &mdash; could not be matched to LIU's list of ${MAJORS.length} majors. Review the ranked table above for the closest available programs.</div>`;
+          }
+          const rank = ranked.findIndex(r => r.i === m.i) + 1;
+          const pr = placementReadiness(m.i, placement);
+          const sameName = cm.trim().toLowerCase() === m.name.toLowerCase();
+          return `<div class="rec-box">
+            <b>${escapeHTML(m.name)}</b>${sameName ? "" : ` <span style="color:var(--muted)">(you entered &ldquo;${escapeHTML(cm)}&rdquo;)</span>`}<br>
+            Aptitude: <b>${m.score}/${APT_MAX} (${m.pct}%)</b> ${pillFor(aptVerdict(m.pct))} &middot; ranked <b>#${rank}</b> of ${MAJORS.length}.
+            ${pr ? `<br>Placement readiness: <b>${pr.pct}%</b> (${pr.subjects.map(s => SUBJECT_LABELS[s]).join(" & ")}).` : `<br>No direct placement subject &mdash; aptitude-based only.`}
+          </div>`;
+        }).join("")}
+  </div>`;
+
+  // ---- Scoring transparency (which answers drove each major) ----
+  html += breakdownSection(ranked, chosenMatches);
+
+  // ---- Areas of improvement ----
+  const improv = [
+    ["English", placement.english.pct, placement.english.scored, "Regular reading, writing practice, vocabulary building"],
+    ["Computer literacy", placement.computer.pct, placement.computer.scored, "Take an intro to computing course; practice Office tools"],
+    ["Mathematics / Business", placement.business.pct, placement.business.scored, "Refresh algebra, ratios, percentages; basic statistics"]
+  ].filter(([_, pct, scored]) => scored > 0 && pct < 70);
+  html += `
+  <div class="report-section">
+    <h3>Areas of Improvement</h3>
+    <table>
+      <tr><th>Area</th><th>Current</th><th>Target</th><th>Action</th></tr>
+      ${improv.length
+        ? improv.map(([a, pct, , act]) => `<tr><td>${a}</td><td>${pct}%</td><td>70%+</td><td>${act}</td></tr>`).join("")
+        : `<tr><td colspan="4">All attempted placement areas are at or above 70%, or were not attempted. Maintain through ongoing study.</td></tr>`}
+    </table>
+  </div>`;
+
+  document.getElementById("report-content").innerHTML = html;
+}
+
+function submitTest() {
+  const state = getState();
+  if (!state.profile || !state.profile.firstName) {
+    if (!confirm("Personal information appears incomplete. Submit anyway?")) return;
+  }
+  generateReport();
+  goToPage(6);
+}
+
+// ============================================================
+//  ACCESS GATE (prototype only — light obfuscation, not real security)
+// ============================================================
+const ACCESS_PASSWORD = "start123";
+function openGate() {
+  const g = document.getElementById("gate");
+  if (g) g.style.display = "none";
+  try { sessionStorage.setItem("aptitudeUnlocked", "1"); } catch (e) {}
+}
+function unlockGate() {
+  const val = document.getElementById("gateInput").value;
+  if (val === ACCESS_PASSWORD) {
+    openGate();
+  } else {
+    document.getElementById("gateError").textContent = "Incorrect password. Please try again.";
+    document.getElementById("gateInput").value = "";
+    document.getElementById("gateInput").focus();
+  }
+}
+
+// ============================================================
+//  DEMO EXAMPLE STUDENTS  (prototype only)
+// ============================================================
+// Fill the desired-major dropdowns with the majors LIU offers, so students can only
+// choose programs we actually provide (no free text -> no off-catalog "majors").
+function populateMajorSelects() {
+  document.querySelectorAll("select.major-select").forEach(sel => {
+    if (sel.options.length > 1) return;   // already populated
+    MAJORS.forEach(name => {
+      const o = document.createElement("option");
+      o.value = name; o.textContent = name;
+      sel.appendChild(o);
+    });
+  });
+}
+
+function renderAll() {
+  renderAptList("part1-questions", "part1", APT_QUESTIONS.part1);
+  renderAptList("part2-questions", "part2", APT_QUESTIONS.part2);
+  renderAptList("part3-questions", "part3", APT_QUESTIONS.part3);
+  renderPart4();
+  populateMajorSelects();   // must run before restore() so saved selections apply
+  restore();
+}
+
+function loadExample(id) {
+  const ex = EXAMPLES.find(e => e.id === id);
+  if (!ex) return;
+  const answers = {
+    part1: Object.assign({}, ex.apt.part1),
+    part2: Object.assign({}, ex.apt.part2),
+    part3: Object.assign({}, ex.apt.part3)
+  };
+  const wrongLetter = (item, correct) =>
+    (Object.keys(item.opts).find(l => l !== correct) || correct);
+  const fill = (key, frac) => {
+    const items = PLACEMENT[key];
+    const scoredIdx = items.map((it, i) => it.ans != null ? i : -1).filter(i => i >= 0);
+    const nCorrect = Math.round(frac * scoredIdx.length);
+    const a = {};
+    scoredIdx.forEach((i, pos) => {
+      a[i] = pos < nCorrect ? items[i].ans : wrongLetter(items[i], items[i].ans);
+    });
+    answers[key] = a;
+  };
+  Object.entries(ex.placement || {}).forEach(([k, frac]) => {
+    if (k === "english") ENGLISH_KEYS.forEach(ek => fill(ek, frac));
+    else fill(k, frac);
+  });
+  saveState({ profile: Object.assign({}, ex.profile), answers });
+  renderAll();          // re-render so selections reflect this example
+  generateReport();
+  goToPage(6);
+}
+
+// ============================================================
+//  INIT
+// ============================================================
+window.addEventListener("DOMContentLoaded", () => {
+  // Always start from scratch: discard any answers saved from a previous open.
+  // (In-session navigation still works; nothing survives closing or reloading the page.)
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+
+  // Skip the gate if already unlocked in this browser session
+  try { if (sessionStorage.getItem("aptitudeUnlocked") === "1") openGate(); } catch (e) {}
+  const gi = document.getElementById("gateInput");
+  if (gi) gi.focus();
+
+  document.getElementById("majorCount").textContent = MAJORS.length;
+  renderAll();
+  const eb = document.getElementById("exampleButtons");
+  if (eb && typeof EXAMPLES !== "undefined") {
+    EXAMPLES.forEach(ex => {
+      const b = document.createElement("button");
+      b.className = "btn-secondary";
+      b.style.padding = "6px 12px";
+      b.innerHTML = `${escapeHTML(ex.name)}${ex.tag ? ` &mdash; <span style="color:var(--muted); font-weight:400;">${escapeHTML(ex.tag)}</span>` : ""}`;
+      b.onclick = () => loadExample(ex.id);
+      eb.appendChild(b);
+    });
+  }
+  goToPage(0);
+});
+</script>
+
+</body>
+</html>
