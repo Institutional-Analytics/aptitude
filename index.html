@@ -120,11 +120,23 @@
 <div id="gate" class="no-print">
   <div class="gate-card">
     <h2>Mental Aptitude Test</h2>
-    <p>LIU Prototype &middot; enter the access password to continue.</p>
-    <input type="password" id="gateInput" placeholder="Password" autocomplete="off"
-           onkeydown="if(event.key==='Enter') unlockGate()">
-    <button class="btn-primary" style="width:100%;" onclick="unlockGate()">Enter</button>
-    <div class="gate-error" id="gateError"></div>
+
+    <!-- Step 1: choose role -->
+    <div id="gateRole">
+      <p>LIU Prototype &middot; please tell us who you are to continue.</p>
+      <button class="btn-primary" style="width:100%; margin-bottom:10px;" onclick="chooseRole('student')">I am a Student</button>
+      <button class="btn-secondary" style="width:100%;" onclick="chooseRole('faculty')">I am a Faculty member</button>
+    </div>
+
+    <!-- Step 2: faculty password (shown only when Faculty is chosen) -->
+    <div id="gatePassword" style="display:none;">
+      <p>Faculty access &middot; enter the access password to continue.</p>
+      <input type="password" id="gateInput" placeholder="Password" autocomplete="off"
+             onkeydown="if(event.key==='Enter') unlockGate()">
+      <button class="btn-primary" style="width:100%;" onclick="unlockGate()">Enter</button>
+      <button class="btn-secondary" style="width:100%; margin-top:8px;" onclick="backToRole()">&larr; Back</button>
+      <div class="gate-error" id="gateError"></div>
+    </div>
   </div>
 </div>
 
@@ -152,7 +164,8 @@
     </div>
 
     <!-- ===== Prototype demo loader (remove this block for production) ===== -->
-    <div class="info-bar no-print" style="border-left-color: var(--accent); background:#fff8e1;">
+    <!-- Hidden by default; revealed only for faculty (see setRole in JS). -->
+    <div id="demoLoader" class="info-bar no-print" style="border-left-color: var(--accent); background:#fff8e1; display:none;">
       <b>Prototype demo &mdash; load a sample student:</b> instantly see a completed test and its generated report. On the report, use the <i>Back</i> buttons to review how each part was answered. (This overwrites any in-progress answers in this browser.)
       <div id="exampleButtons" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;"></div>
     </div>
@@ -1127,14 +1140,45 @@ function submitTest() {
 //  ACCESS GATE (prototype only — light obfuscation, not real security)
 // ============================================================
 const ACCESS_PASSWORD = "start123";
+
+// Apply a role: faculty sees the prototype demo loader; students do not.
+function setRole(role) {
+  const demo = document.getElementById("demoLoader");
+  if (demo) demo.style.display = (role === "faculty") ? "" : "none";
+  try { sessionStorage.setItem("aptitudeRole", role); } catch (e) {}
+}
+
 function openGate() {
   const g = document.getElementById("gate");
   if (g) g.style.display = "none";
   try { sessionStorage.setItem("aptitudeUnlocked", "1"); } catch (e) {}
 }
+
+// Step 1 of the gate: student enters immediately; faculty is asked for a password.
+function chooseRole(role) {
+  if (role === "student") {
+    setRole("student");
+    openGate();
+  } else {
+    document.getElementById("gateRole").style.display = "none";
+    document.getElementById("gatePassword").style.display = "";
+    const gi = document.getElementById("gateInput");
+    if (gi) gi.focus();
+  }
+}
+
+// Return from the faculty password step back to the role choice.
+function backToRole() {
+  document.getElementById("gatePassword").style.display = "none";
+  document.getElementById("gateRole").style.display = "";
+  document.getElementById("gateError").textContent = "";
+  document.getElementById("gateInput").value = "";
+}
+
 function unlockGate() {
   const val = document.getElementById("gateInput").value;
   if (val === ACCESS_PASSWORD) {
+    setRole("faculty");
     openGate();
   } else {
     document.getElementById("gateError").textContent = "Incorrect password. Please try again.";
@@ -1206,10 +1250,14 @@ window.addEventListener("DOMContentLoaded", () => {
   // (In-session navigation still works; nothing survives closing or reloading the page.)
   try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
 
-  // Skip the gate if already unlocked in this browser session
-  try { if (sessionStorage.getItem("aptitudeUnlocked") === "1") openGate(); } catch (e) {}
-  const gi = document.getElementById("gateInput");
-  if (gi) gi.focus();
+  // Skip the gate if already unlocked in this browser session, restoring the role
+  // so the prototype demo loader stays visible for faculty and hidden for students.
+  try {
+    if (sessionStorage.getItem("aptitudeUnlocked") === "1") {
+      setRole(sessionStorage.getItem("aptitudeRole") || "student");
+      openGate();
+    }
+  } catch (e) {}
 
   document.getElementById("majorCount").textContent = MAJORS.length;
   renderAll();
