@@ -271,6 +271,15 @@
       <button class="btn-secondary" onclick="window.print()">Print / Save as PDF</button>
       <button class="btn-secondary" onclick="if(confirm('Clear all saved data and start over?')){localStorage.removeItem('aptitudeTest');location.reload();}">Start New Test</button>
     </div>
+    <div id="emailFallback" class="info-bar no-print" style="display:none; margin-top:12px;">
+      Didn't your email open? Use one of these instead:
+      <div style="margin-top:8px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+        <a id="gmailLink" href="#" target="_blank" rel="noopener" class="btn-secondary"
+           style="text-decoration:none; padding:8px 14px; border-radius:6px; display:inline-block;">Open in Gmail</a>
+        <button class="btn-secondary" onclick="copyResults()">Copy results</button>
+        <span id="copyMsg" style="color:var(--muted); font-size:13px;"></span>
+      </div>
+    </div>
   </div>
 
   <div class="footer-note no-print">
@@ -1185,15 +1194,54 @@ function emailResults() {
   const to = encodeURIComponent(RESULTS_EMAIL);
   const su = encodeURIComponent(subject);
   const bodyEnc = encodeURIComponent(body);
+  const mailtoHref = "mailto:" + to + "?subject=" + su + "&body=" + bodyEnc;
+  const gmailHref = "https://mail.google.com/mail/?view=cm&fs=1&to=" + to + "&su=" + su + "&body=" + bodyEnc;
 
-  // Primary: open Gmail web compose in a new tab. This works in any browser
-  // (LIU accounts are Google Workspace) and does NOT need a desktop mail app.
-  const gmail = "https://mail.google.com/mail/?view=cm&fs=1&to=" + to + "&su=" + su + "&body=" + bodyEnc;
-  const win = window.open(gmail, "_blank");
+  // Keep the raw text around so the "Copy results" fallback can use it.
+  lastResultsText = body;
 
-  // Fallback: if the popup was blocked, hand off to the device's default mail app.
-  if (!win) {
-    window.location.href = "mailto:" + to + "?subject=" + su + "&body=" + bodyEnc;
+  // Always reveal the fallback panel (Open in Gmail / Copy results) so the
+  // student is never stuck if their device's default mail app doesn't open.
+  const fb = document.getElementById("emailFallback");
+  const gl = document.getElementById("gmailLink");
+  if (gl) gl.href = gmailHref;
+  if (fb) fb.style.display = "";
+  const cm = document.getElementById("copyMsg");
+  if (cm) cm.textContent = "";
+
+  // On phones/tablets the Gmail web "compose" link ignores the pre-filled fields
+  // and just opens the inbox, but a mail app is almost always installed — so use
+  // mailto: there. On desktop it's the reverse (often no mail app), so open Gmail
+  // web compose, falling back to mailto: if the popup is blocked.
+  const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isMobile) {
+    window.location.href = mailtoHref;
+  } else {
+    const win = window.open(gmailHref, "_blank");
+    if (!win) window.location.href = mailtoHref;
+  }
+}
+
+// Holds the plain-text results for the "Copy results" fallback button.
+let lastResultsText = "";
+function copyResults() {
+  const msg = document.getElementById("copyMsg");
+  const done = () => { if (msg) msg.textContent = "Copied — paste it into any email."; };
+  const fail = () => { if (msg) msg.textContent = "Couldn't copy automatically — select the text manually."; };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(lastResultsText).then(done, fail);
+  } else {
+    // Legacy fallback for older browsers without the async clipboard API.
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = lastResultsText;
+      ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      done();
+    } catch (e) { fail(); }
   }
 }
 
