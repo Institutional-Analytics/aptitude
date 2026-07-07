@@ -1182,10 +1182,19 @@ function emailResults() {
 
   const subject = "Aptitude Test Results — " + fullName;
   const body = L.join("\n");
-  const href = "mailto:" + encodeURIComponent(RESULTS_EMAIL) +
-    "?subject=" + encodeURIComponent(subject) +
-    "&body=" + encodeURIComponent(body);
-  window.location.href = href;
+  const to = encodeURIComponent(RESULTS_EMAIL);
+  const su = encodeURIComponent(subject);
+  const bodyEnc = encodeURIComponent(body);
+
+  // Primary: open Gmail web compose in a new tab. This works in any browser
+  // (LIU accounts are Google Workspace) and does NOT need a desktop mail app.
+  const gmail = "https://mail.google.com/mail/?view=cm&fs=1&to=" + to + "&su=" + su + "&body=" + bodyEnc;
+  const win = window.open(gmail, "_blank");
+
+  // Fallback: if the popup was blocked, hand off to the device's default mail app.
+  if (!win) {
+    window.location.href = "mailto:" + to + "?subject=" + su + "&body=" + bodyEnc;
+  }
 }
 
 function submitTest() {
